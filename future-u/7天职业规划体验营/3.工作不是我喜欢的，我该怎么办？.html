@@ -1,0 +1,2748 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" style="height: 100%; font-size: 84.8px;"><head>
+  <!--标题-->
+  <title>WECHAT_EMPTY_TITLE</title>
+  <!--小图标-->
+  <link rel="icon" href="/xiaoe-logo.ico" type="image/x-ico">
+
+  <!--基础的meta信息-->
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_511353_emundlac5bv.css">
+
+  <script src="https://hm.baidu.com/hm.js?17bc0e24e08f56c0c13a512a76c458fb"></script><script async="" src="https://cdn.jsdelivr.net/npm/sa-sdk-javascript@1.13.10/sensorsdata.min.js" charset="UTF-8"></script><script src="http://sdk.xiaoeknow.com/ds/xiaoeStatistics.js"></script><script>
+      window._eReport = false
+  </script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <!-- 页面统计接口引入 -->
+    <script>
+    (function() {
+    /* 当需要本地测试时增加下面这行代码*/
+//    window.LOCAL_TEST_TYPE = 'H5';
+    /* LOCAL_TEST_TYPE取值如下
+     * 店铺小程序:'MP'
+     * 店铺H5:'H5'
+     * 店铺PC WEB: 'PC'
+     * 打卡小程序: 'CM'
+     * 官网: 'HP'
+     * 管理台: 'BE'
+     */
+    var dp = document.createElement("script");
+    dp.src = "http://sdk.xiaoeknow.com/ds/xiaoeStatistics.js";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(dp, s);
+  })();
+    </script>
+
+    <!-- 神策埋点 -->
+    <script src="http://sdk.xiaoeknow.com/sensors_static/v1/h5/sensorsStatistics.js"></script>
+
+  <!--百度上报接口-->
+  <script>
+      var _hmt = _hmt || [];
+      setTimeout(function () {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?17bc0e24e08f56c0c13a512a76c458fb";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+      }, 0);
+      //封装一个简单接口调用
+      window.event_report = function (event) {
+          try {
+              _hmt.push(['_trackEvent', event, 1]);
+          }
+          catch (e) {
+          }
+      }
+      window._loadTimeReport = function(eventName, t){
+          var ts = '';
+          var ua = window.navigator.userAgent.toLowerCase();
+          if (ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) {
+             eventName += '_ios';
+          }else if (ua.indexOf('android') > -1){
+             eventName += '_android';
+          }
+          //上报页面加载时间
+          if (t <= 0.5) {
+                ts = '_500ms';
+          } else if (0.5 < t && t <= 1){
+                ts = '_1s';
+          }else if (1 < t && t <= 2){
+                ts = '_2s';
+          }else if (2 < t && t <= 3){
+                ts = '_3s';
+          }else if (3 < t && t <= 5){
+                ts = '_5s';
+          }else if (5 < t && t <= 10){
+                ts = '_10s';
+          }else if (t > 10){
+                ts = '_morethan_10s';
+          }
+          event_report(eventName + ts);
+      }
+      // 页面加载时间
+      document.addEventListener('readystatechange', function() {
+          if (document.readyState === 'complete') {
+              if(window.performance){
+                    performance = window.performance
+                    try {
+                        // 上报页面pv
+                        event_report("page_view_count_pv");
+                        // 上报页面加载时间-分阶段
+                        // fpt
+                        window._loadTimeReport('first_paint_time',(performance.timing.responseEnd-performance.timing.fetchStart)/1000);
+                        //tti
+                        window._loadTimeReport('time_to_interact',(performance.timing.domInteractive-performance.timing.fetchStart)/1000);
+                        //dom ready
+                        window._loadTimeReport('time_dom_ready',(performance.timing.domContentLoadedEventEnd-performance.timing.fetchStart)/1000);
+                        //page load
+                        window._loadTimeReport('time_page_load_complete',(performance.timing.domContentLoadedEventStart-performance.timing.fetchStart)/1000);
+                    } catch (err) {
+                        //
+                    }
+              }
+          }
+      })
+  </script>
+
+  <!--微信内页面前后台切换判断，产生事件-->
+  <script>
+      var isWeiXin = function() {
+          var ua = window.navigator.userAgent.toLowerCase();
+          //console.log(ua);//mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+          if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+              return true;
+          } else {
+              return false;
+          }
+      };
+      var onVisibilityChanged = function(){
+          if (!isWeiXin()) {
+              //console.log("不是来自微信内置浏览器");
+              var visitState = document.visibilityState;
+              var needReloadWhenShow = localStorage.getItem('need_reload_when_show');
+              if ((!visitState || visitState == 'visible') && needReloadWhenShow == 1) {
+                  localStorage.setItem('need_reload_when_show', '0');
+                  var href = location.pathname;
+                  if (href) {
+                      location.replace(href + '?' + new Date().getTime());
+                  } else {
+                      location.reload(true);
+                  }
+              }
+          }
+      };
+      // 用户退到后台或从后台返回触发
+      document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
+      document.addEventListener("visibilitychange", onVisibilityChanged, false);
+  </script>
+
+  <!--根据配置确定是否需要适配PC-->
+  <script>
+      if (false){
+          var htmlDom = document.documentElement;
+          var windowWidth = htmlDom.clientWidth;
+
+          var proportion = 7.5
+          if(windowWidth>=480){
+              windowWidth = 480;
+              proportion = 9.6;
+          }
+          else{
+              proportion = 7.5;
+          }
+
+          var evt = "onorientationchange" in window ? "orientationchange" : "resize";
+          htmlDom.style.fontSize = windowWidth / proportion + 'px';
+          (function () {
+              document.addEventListener('DOMContentLoaded', function () {
+                  if (!htmlDom.style.fontSize) {
+                      var htmlDomProtect = document.documentElement;
+                      var windowWidth = htmlDomProtect.clientWidth;
+                      if(windowWidth>=480){
+                          windowWidth = 480;
+                          proportion = 9.6;
+                      }
+                      else{
+                          proportion = 7.5;
+                      }
+                      htmlDomProtect.style.fontSize = windowWidth / proportion + 'px';
+                  }
+              }, false);
+          })();
+
+          window.addEventListener(evt, function () {
+              setTimeout(function () {
+                  var htmlDomProtect = document.documentElement;
+                  var windowWidth = htmlDomProtect.clientWidth;
+                  if(windowWidth>=480){
+                      windowWidth = 480;
+                      proportion = 9.6;
+                  }
+                  else{
+                      proportion = 7.5;
+                  }
+                  htmlDomProtect.style.fontSize = windowWidth / proportion + 'px';
+              }, 200);
+          }, false);
+      }else {
+          var htmlDom = document.documentElement;
+          var windowWidth = htmlDom.clientWidth;
+          var evt = "onorientationchange" in window ? "orientationchange" : "resize";
+          htmlDom.style.fontSize = windowWidth / 7.5 + 'px';
+          (function () {
+              document.addEventListener('DOMContentLoaded', function () {
+                  if (!htmlDom.style.fontSize) {
+                      var htmlDomProtect = document.documentElement;
+                      var windowWidth = htmlDomProtect.clientWidth;
+                      htmlDomProtect.style.fontSize = windowWidth / 7.5 + 'px';
+                  }
+              }, false);
+          })();
+
+          window.addEventListener(evt, function () {
+              setTimeout(function () {
+                  var htmlDomProtect = document.documentElement;
+                  var windowWidth = htmlDomProtect.clientWidth;
+                  htmlDomProtect.style.fontSize = windowWidth / 7.5 + 'px';
+              }, 200);
+          }, false);
+      }
+  </script>
+<style type="text/css">.ss-Attention-qr[data-v-b596aff0] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+}
+.ss-Attention-qr .ss-Att-qr-mask[data-v-b596aff0] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.ss-Attention-qr .ss-Att-qr-main[data-v-b596aff0] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: absolute;
+  top: 2.6rem;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  padding-top: .44rem;
+  width: 6rem;
+  height: 7.44rem;
+  border-radius: .08rem;
+  background-color: #fff;
+}
+.ss-Attention-qr .ss-Att-qr-main .ss-Att-qr-close[data-v-b596aff0] {
+  position: absolute;
+  width: .3rem;
+  height: .3rem;
+  top: .3rem;
+  right: 0.3rem;
+}
+.ss-Attention-qr .ss-Att-qr-main .ss-Att-qr-titel[data-v-b596aff0] {
+  font-size: .32rem;
+  font-weight: 600;
+  line-height: .44rem;
+  text-align: center;
+}
+.ss-Attention-qr .ss-Att-qr-main .ss-Att-qr-code[data-v-b596aff0] {
+  margin: .2rem 0 .12rem;
+  width: 5rem;
+  height: 5rem;
+}
+.ss-Attention-qr .ss-Att-qr-main .ss-Att-qr-code img[data-v-b596aff0] {
+  width: 100%;
+  height: 100%;
+}
+.ss-Attention-qr .ss-Att-qr-main .ss-Att-qr-footer[data-v-b596aff0] {
+  line-height: .34rem;
+  font-size: .24rem;
+  color: #888;
+}
+.dec-4[data-v-06acb3f0] {
+  border-bottom: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  bottom: 0;
+  right: 0;
+  -webkit-transform-origin: bottom right;
+  transform-origin: bottom right;
+}
+.dec-3[data-v-06acb3f0] {
+  border-bottom: 1px solid #dadada;
+  border-left: 1px solid #dadada;
+  bottom: 0;
+  left: 0;
+  -webkit-transform-origin: bottom left;
+  transform-origin: bottom left;
+}
+.dec-2[data-v-06acb3f0] {
+  border-top: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  top: 0;
+  right: 0;
+  -webkit-transform-origin: top right;
+  transform-origin: top right;
+}
+.dec-1[data-v-06acb3f0] {
+  border-top: 1px solid #dadada;
+  border-left: 1px solid #dadada;
+  top: 0;
+  left: 0;
+  -webkit-transform-origin: top left;
+  transform-origin: top left;
+}
+.dec[data-v-06acb3f0] {
+  display: block;
+  width: .8rem;
+  height: .8rem;
+  position: absolute;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+}
+.img-code[data-v-06acb3f0] {
+  margin: .4rem auto;
+  position: relative;
+  width: 2.3rem;
+  height: 2.3rem;
+}
+.account-code-container[data-v-06acb3f0] {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000000;
+}
+.account-code-bg[data-v-06acb3f0] {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.content-main[data-v-06acb3f0] {
+  position: absolute;
+  top: 2.6rem;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 5rem;
+  height: 5.4rem;
+  border-radius: .14rem;
+  background-color: #fff;
+}
+.content-main .close[data-v-06acb3f0] {
+  width: .24rem;
+  height: .24rem;
+  position: absolute;
+  top: .1rem;
+  right: .1rem;
+  padding: .2rem;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.content-main > .title[data-v-06acb3f0] {
+  margin-top: .7rem;
+  text-align: center;
+  color: #fdab46;
+}
+.content-main > .hint-sentence[data-v-06acb3f0] {
+  margin-top: .2rem;
+  text-align: center;
+}
+.code[data-v-06acb3f0] {
+  display: block;
+  width: 1.9rem;
+  height: 1.9rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.content-main > .footer[data-v-06acb3f0] {
+  margin-top: .22rem;
+  text-align: center;
+}
+.to-collect > img[data-v-fcebda76] {
+  width: 4.14rem;
+  height: 1.22rem;
+  position: absolute;
+  top: .21rem;
+  right: 0.2rem;
+}
+.collect-bg[data-v-fcebda76] {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.to-collect[data-v-fcebda76] {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000;
+}
+.wx-share-container[data-v-444edfc3] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 0.32rem;
+}
+.wx-share-container .send-friend-mask[data-v-444edfc3] {
+  margin-top: .14rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+  font-size: .28rem;
+  color: #fff;
+}
+.wx-share-container .send-friend-mask img[data-v-444edfc3] {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  text-align: right;
+  margin-right: 0.4rem;
+}
+.wx-share-container .send-friend-mask div[data-v-444edfc3] {
+  width: 1.92rem;
+  height: .72rem;
+  margin-top: .34rem;
+  line-height: .72rem;
+  border-radius: .37rem;
+  border: 1px solid #fff;
+}
+.text_align[data-v-444edfc3] {
+  text-align: center;
+}
+.public-top-wrap[data-v-292c8a64] {
+  position: relative;
+  height: .92rem;
+  z-index: 10;
+}
+.public-top[data-v-292c8a64] {
+  background: #fff;
+  -webkit-box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 0, 0, 0.05);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: .92rem;
+  padding: 0 .32rem;
+  font-size: 0;
+  overflow: hidden;
+  z-index: 1;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+  transition: -webkit-transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.public-top.is-fixed[data-v-292c8a64] {
+  position: fixed;
+}
+.public-top.public-top__hide[data-v-292c8a64] {
+  -webkit-transform: translateY(-45px);
+  transform: translateY(-45px);
+}
+.x-home[data-v-292c8a64] {
+  float: left;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.x-home .x-title[data-v-292c8a64] {
+  display: inline-block;
+  line-height: .44rem;
+  max-width: 2.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+  margin: .02rem 0 0 .16rem;
+  color: #030303;
+  font-size: 0.28rem;
+}
+.x-home .public-top-icon[data-v-292c8a64] {
+  width: .64rem;
+  height: .64rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  padding: 0;
+}
+.x-menu[data-v-292c8a64] {
+  float: right;
+  font-size: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.x-menu .public-top-icon[data-v-292c8a64] {
+  margin: 0 0 0 0.36rem;
+}
+.x-menu .public-top-link[data-v-292c8a64] {
+  padding: 0 .16rem;
+  font-size: .26rem;
+  color: #4a4c5b;
+  cursor: pointer;
+}
+.x-menu .divide[data-v-292c8a64] {
+  height: .24rem;
+  width: 1px;
+  display: inline-block;
+  background: #c8c8c8;
+}
+.public-top-icon[data-v-292c8a64] {
+  display: inline-block;
+  width: .48rem;
+  height: .48rem;
+  vertical-align: top;
+  padding: .08rem;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.to-top[data-v-292c8a64] {
+  display: none;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: fixed;
+  right: .16rem;
+  bottom: 3.2rem;
+  width: .8rem;
+  height: .8rem;
+  text-align: center;
+  border: .02rem solid #b2b2b2;
+  background: #fff;
+  z-index: 10;
+  border-radius: 50%;
+}
+.to-top.to-top__show[data-v-292c8a64] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.to-top .to-top-img[data-v-292c8a64] {
+  height: 0.5rem;
+}
+.team-buy__item {
+  height: 1.2rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+  border-top: 0.01rem solid #e5e5e5;
+}
+.none_border_top {
+  border-top: none;
+}
+.user-avatar {
+  width: .8rem!important;
+  height: .8rem!important;
+  border-radius: 50%;
+  margin-right: 0.2rem;
+}
+.item-info__wrapper {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+.item-join__num {
+  height: .32rem;
+  line-height: 0.32rem;
+}
+.item-join__num span {
+  color: #f66a4b;
+}
+.item-count__time {
+  margin-top: .06rem;
+  height: .32rem;
+  line-height: 0.32rem;
+}
+.team-buy__price {
+  color: #f66a4b;
+  margin-right: 0.4rem;
+}
+.go-to__buy {
+  margin-left: .18rem;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: .22rem;
+  width: 1.2rem;
+  height: .48rem;
+  background: #ff002a;
+  border-radius: .24rem;
+  color: #fff;
+}
+.team-buy[data-v-1286453c] {
+  background: #fdece9;
+  border-radius: .12rem;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAsYAAABkBAMAAAB3DetKAAAAMFBMVEUAAAD/AP//AEn/AID/ACv/ADn/AC7/AFX/AED/ADv/AED/ADP/ACv/ADP/AFX/ACcV/TtCAAAAEHRSTlMAAQcCDAkLAwQNCAUGCgYN3FAsmAAABJ9JREFUeF7t3E9oImcYBvB8zMEev+BBoT3ZmgTjgm4OCUR6aDXgQiiEVZqsXoIRLEhqc4jEvSR7UJrQkxnwkItsssFkCxuxkSg9uOwqrt1DUMGwuW6hpbey58607ByWuol/XhP8nucYZIQ3T+b9mXyZkdseZHQ6ul0o1GqvTSZr7VUhn4hP8f5cGdFHixZ/05lKzYUbHk8mkzGZLJl9j/+y+U3q73AjY83bu742wqaL5qY7GV6y5uNTo//3gqnods3iV18yGe+01Ih+2+J1zymjs1+z6vXkyvHpdRuNsGi1nmxYO5yYFKt63fPHj67sM2I48bvDx13+5LOZal1eOP3omDFgr7xQsXfpCu0ayYsyxzDbDUftYO+ukHaUK2U/+CLCHh6oA+6bKwwn9b0j24gWxFANrZR5n11hNLvPtTKjwrIvQuEKaavuKo8gbKv1XZmTucJxf1f0/Sedhc43aV0xe7A3IfCUjXeSvgi9K4wH8gQXdcLykY3aFdpbHXIBKfGXfMgH5wrDnb3fBZuw7oV8xAfrCuNj1zORNl3OeWQbvCscreWIMFoL+WwDdoX2zg+E+Ow3u7gcuTFXSDl5fOiJYRjbzd6oKwxj9zaH+zaRezfBb9oVjtaDIa6yo+Wz3QJXsNze82Ed8cvdZ7fEFcbHy98P54wP+a1xBfvRSf7BD67QDWD3wRVfhsirDFdIL3fJqwxXOFrfUlcZrpB+o60yXEFfZbhiYFWGKxyr5MCAK6S39FaGK+4GnlAPAK6Qxu6R/wYDrvjBOU49ALhC98VXlFWGK+irDFcMrspwxQZ9leEKnUoO4sAVG84nnHgScAX9n0jgCpUc1McD4Aq13OQHEOGKTxffUB+NgytYjvb0PVyh7Q7CwBWagWgDV7CtVXJhwBXSC/oTy3CFkfgf/OAK+inDFYRT1pZKoWTJePzNoPN9guFLz1JaWUN2LoQryKbMprdL+wqYnOFG2lQr5OPrU++zHk0UaiWLP+hOzTXSr9a4KK4wjsm+zX49keoPf0AdX+Gqh9SNqt8I5aVLk4+4EK5Q+VPpscwsWnoaSjbS+U7KyWaK5kDyQpmzAK5gsYMeyizFzPVUOF2JdFf+HXNAXegCuMJwFnJNRrrob9WbWrH28Gg0baFX+PC7gsXMofnjNd4BKZXizP98yvvhCv1P3uR5VgBXsNl/74+R6+jh5Kl7fiFv76MrpC1lodtFcIVhZ381uZKutC20PvrrfjM1p4C//66YMbsvsmK4Qh8rqcMKLylFTMTX/itholB8bfEH1Hb8GedErlAXmeu5MK5g09GiKeO5DAacaoKXDfVeum6ndgV7eN9V5mSugCu0hT7OyVwBV2jsz1K7Aq5wLC5vkrkCrtDY/8ZG7Aq4gp3JnxO6Aq7QtjixK+AKtuE8pHYFXKFTakLtCrji7hy5K+AKHYEr4Aq4Aq6AK+AKuAKugCvgCrgCroAr4Aq4Aq6AK+AKuAKu+IXcFXBFoktXtE+XroArug5c8XUHrugx7V2B8xW9B6747GOuIIiArhj5pL0rCCKgK9S0cQVFBHTFRPtzm1QR99zm2w9cQRrhXPEP/BVuCF9mHesAAAAASUVORK5CYII=);
+  background-position: bottom;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.team-buy__default[data-v-1286453c] {
+  padding: 0.34rem 0.32rem;
+}
+.margin_grey_line[data-v-1286453c] {
+  background-color: #efeff4;
+  height: 0.2rem;
+}
+.count-time[data-v-1286453c] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-size: .24rem;
+  color: #4a4c5b;
+  line-height: 0.34rem;
+}
+.count-time .title[data-v-1286453c] {
+  font-size: .32rem;
+  color: #ff002a;
+  margin-right: 0.4rem;
+}
+.count-time small[data-v-1286453c] {
+  font-size: 0.22rem;
+}
+.count-time .time[data-v-1286453c] {
+  background: #4a4c5b;
+  border-radius: .04rem;
+  color: #fff;
+  margin: .05rem;
+  padding: 0 .06rem;
+  min-width: .3rem;
+  text-align: center;
+}
+.team-buy__text[data-v-1286453c] {
+  font-size: .24rem;
+  color: #4a4c5b;
+  line-height: .34rem;
+  margin-top: 0.24rem;
+}
+.team_buy__info[data-v-1286453c] {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  color: #c8c8c8;
+  margin-top: 0.3rem;
+}
+.team_buy__info .start[data-v-1286453c],
+.team_buy__info[data-v-1286453c] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.team_buy__info .start .photo[data-v-1286453c] {
+  width: .64rem;
+  height: .64rem;
+  border-radius: 50%;
+  border: 0.04rem solid #fff;
+}
+.team_buy__info .start .photo[data-v-1286453c]:not(:first-child) {
+  margin-left: -0.25rem;
+}
+.team_buy__info .start span[data-v-1286453c] {
+  margin-left: 0.2rem;
+}
+.team_buy__info .end[data-v-1286453c] {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.team_buy__info .end .price[data-v-1286453c] {
+  font-weight: 500;
+  color: #ff002a;
+  font-size: 0.4rem;
+}
+.team_buy__info .end .price small[data-v-1286453c] {
+  font-size: 0.24rem;
+}
+.team_buy__info .end .action[data-v-1286453c] {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: .22rem;
+  width: 1.2rem;
+  height: .48rem;
+  background: #ff002a;
+  border-radius: .24rem;
+  color: #fff;
+  margin-left: 0.18rem;
+}
+.team_buy__info[data-v-1286453c] {
+  font-size: .24rem;
+  color: #4a4c5b;
+}
+.look_more_team_buy[data-v-1286453c] {
+  height: .8rem;
+  line-height: .8rem;
+  background-color: #f8f8f8;
+  text-align: center;
+}
+.team-buy__all[data-v-1286453c] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.all-list__wrapper[data-v-1286453c] {
+  width: 6.5rem;
+  max-height: 7.68rem;
+  border-radius: .08rem;
+  background-color: #fff;
+  margin: 1.5rem auto 0;
+  padding: .3rem;
+  overflow-y: scroll;
+}
+.close-all__list[data-v-1286453c] {
+  width: .56rem;
+  height: .56rem;
+  border: .03rem solid #fff;
+  border-radius: 50%;
+  margin: .4rem auto 0;
+  line-height: .56rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.close-all__list span[data-v-1286453c] {
+  color: #fff;
+  font-size: .64rem;
+  margin-top: -0.07rem;
+}
+.dec-4[data-v-4d170ee0] {
+  border-bottom: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  bottom: 0;
+  right: 0;
+  -webkit-transform-origin: bottom right;
+  transform-origin: bottom right;
+}
+.dec-3[data-v-4d170ee0] {
+  border-bottom: 1px solid #dadada;
+  border-left: 1px solid #dadada;
+  bottom: 0;
+  left: 0;
+  -webkit-transform-origin: bottom left;
+  transform-origin: bottom left;
+}
+.dec-2[data-v-4d170ee0] {
+  border-top: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  top: 0;
+  right: 0;
+  -webkit-transform-origin: top right;
+  transform-origin: top right;
+}
+.dec-1[data-v-4d170ee0] {
+  border-top: 1px solid #dadada;
+  border-left: 1px solid #dadada;
+  top: 0;
+  left: 0;
+  -webkit-transform-origin: top left;
+  transform-origin: top left;
+}
+.dec[data-v-4d170ee0] {
+  display: block;
+  width: .8rem;
+  height: .8rem;
+  position: absolute;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+}
+.img-code[data-v-4d170ee0] {
+  margin: .4rem auto;
+  position: relative;
+  width: 2.3rem;
+  height: 2.3rem;
+}
+.account-code-container[data-v-4d170ee0] {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000000;
+}
+.account-code-bg[data-v-4d170ee0] {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.content-main[data-v-4d170ee0] {
+  position: absolute;
+  top: 2.6rem;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 5rem;
+  height: 5.4rem;
+  border-radius: .14rem;
+  background-color: #fff;
+}
+.content-main .close[data-v-4d170ee0] {
+  width: .24rem;
+  height: .24rem;
+  position: absolute;
+  top: .1rem;
+  right: .1rem;
+  padding: .2rem;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.content-main > .title[data-v-4d170ee0] {
+  margin-top: .7rem;
+  text-align: center;
+  color: #fdab46;
+}
+.content-main > .hint-sentence[data-v-4d170ee0] {
+  margin-top: .2rem;
+  text-align: center;
+}
+.code[data-v-4d170ee0] {
+  display: block;
+  width: 1.9rem;
+  height: 1.9rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.content-main > .footer[data-v-4d170ee0] {
+  margin-top: .22rem;
+  text-align: center;
+}
+.ss-float-menu .btn-menu {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: fixed;
+  right: .32rem;
+  bottom: 1.8rem;
+  width: .88rem;
+  height: .88rem;
+  border-radius: 100%;
+  background: #fff;
+  -webkit-box-shadow: 0 0.1rem 0.2rem 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.1rem 0.2rem 0 rgba(0, 0, 0, 0.1);
+  z-index: 4;
+  opacity: 1;
+  -webkit-transition: all 0.3s cubic-bezier(0.46, 0.03, 0.52, 0.96);
+  transition: all 0.3s cubic-bezier(0.46, 0.03, 0.52, 0.96);
+}
+.ss-float-menu .btn-menu.is-fold {
+  opacity: 0.3;
+}
+.ss-float-menu .btn-menu img {
+  width: .4rem;
+  height: .4rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ss-float-menu .over-layer {
+  position: fixed;
+  width: 100%;
+  height: 0%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  -webkit-transition: opacity .3s;
+  transition: opacity .3s;
+  z-index: 6;
+}
+.ss-float-menu .over-layer.is-show {
+  opacity: 1;
+  height: 100%;
+}
+.ss-float-menu .container-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  opacity: 0;
+  z-index: 10;
+  height: 0;
+  width: 100%;
+  -webkit-transform: translate3d(0, 100%, 0);
+  transform: translate3d(0, 100%, 0);
+  border-radius: .2rem .2rem 0 0;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+.ss-float-menu .container-menu.is-show {
+  height: 4.08rem;
+  opacity: 1;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.ss-float-menu .container-menu .menus {
+  height: 3.06rem;
+  width: 100%;
+  font-size: .24rem;
+  color: #4a4c5b;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding-top: .4rem;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ss-float-menu .container-menu .menus li {
+  width: 33.33%;
+  margin-bottom: .36rem;
+  text-align: center;
+  position: relative;
+}
+.ss-float-menu .container-menu .menus li img {
+  width: .52rem;
+  height: 0.52rem;
+}
+.ss-float-menu .container-menu .menus li .tag-num {
+  display: inline-block;
+  position: absolute;
+  left: 1.32rem;
+  top: 0;
+  color: #f2f2f8;
+  padding: 0 .1rem;
+  background: #ff002a;
+  border-radius: .16rem;
+  border: .02rem solid #fff;
+  line-height: .31rem;
+  height: .28rem;
+  min-width: .18rem;
+  font-size: 0.22rem;
+}
+.ss-float-menu .container-menu .btn-close {
+  font-size: .32rem;
+  color: #666;
+  height: 1rem;
+  line-height: 100%;
+  text-align: center;
+  border-top: 1px solid #f2f2f8;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.couponNewWrap[data-v-53063320] {
+  width: 6.9rem;
+  margin-bottom: .24rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.couponNewWrap[data-v-53063320]:last-child {
+  margin-bottom: 0;
+}
+.couponNewWrap .detail_info[data-v-53063320] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: .32rem;
+  background-color: #fffaf4;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 0 0 4px 4px;
+  color: #505050;
+  font-size: .2rem;
+  text-align: left;
+}
+.couponNewV2[data-v-53063320] {
+  position: relative;
+  width: 6.9rem;
+  height: 2.04rem;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.couponNewV2 .couponValue[data-v-53063320] {
+  float: left;
+  width: 2.08rem;
+  height: 2.04rem;
+  background: -webkit-gradient(linear, left top, right top, from(#ffb073), to(#ff9d52));
+  background: linear-gradient(90deg, #ffb073, #ff9d52);
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 4px 0 0 4px;
+}
+.couponNewV2 .couponValue .couponPrice[data-v-53063320] {
+  position: relative;
+  width: 100%;
+  height: .9rem;
+  margin: .28rem auto .08rem;
+  text-align: center;
+  line-height: .9rem;
+  font-size: .88rem;
+  font-weight: 500;
+  color: #fff;
+}
+.couponNewV2 .couponValue .couponPrice .fontSmall[data-v-53063320] {
+  font-size: 0.48rem !important;
+}
+.couponNewV2 .couponValue .couponPrice .fontLastSmall[data-v-53063320] {
+  font-size: 0.32rem !important;
+}
+.couponNewV2 .couponValue .couponPrice .fixedfont[data-v-53063320] {
+  font-size: 0.24rem !important;
+}
+.couponNewV2 .couponValue .couponPrice .fixedPercent[data-v-53063320] {
+  font-size: 0.32rem !important;
+}
+.couponNewV2 .couponValue .couponPrice span[data-v-53063320] {
+  position: relative;
+  display: inline-block;
+}
+.couponNewV2 .couponValue .couponPrice .coupon-symbol[data-v-53063320],
+.couponNewV2 .couponValue .couponPrice .discountFont[data-v-53063320] {
+  font-size: .32rem;
+  margin-left: -0.01rem;
+}
+.couponNewV2 .couponValue .couponUseCondition[data-v-53063320] {
+  width: 100%;
+  overflow: hidden;
+  max-height: .8rem;
+  line-height: .36rem;
+  color: #fff;
+  text-align: center;
+}
+.couponNewV2 .unselectState[data-v-53063320] {
+  background: #cdcdcd !important;
+}
+.couponNewV2 .couponInfo[data-v-53063320] {
+  float: left;
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 3rem;
+  height: 100%;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .32rem 0 .32rem .24rem;
+  border-bottom-right-radius: .08rem;
+  border-top-right-radius: .08rem;
+  color: #888;
+  font-size: .2rem;
+  text-align: left;
+}
+.couponNewV2 .couponInfo span[data-v-53063320] {
+  display: inline-block;
+}
+.couponNewV2 .couponInfo .couponName[data-v-53063320] {
+  width: 100%;
+  line-height: .3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: .16rem;
+  color: #505050;
+  font-size: .24rem;
+  font-weight: 500;
+}
+.couponNewV2 .couponInfo .couponUseTime[data-v-53063320] {
+  width: 100%;
+  height: .28rem;
+  line-height: .28rem;
+  font-size: 0.2rem;
+}
+.couponNewV2 .couponInfo .moreInfo[data-v-53063320] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0.02rem 0;
+}
+.couponNewV2 .couponInfo .operateBtn[data-v-53063320] {
+  width: .24rem;
+  height: .24rem;
+  cursor: pointer;
+  margin-left: .06rem;
+  background-size: 100% 100%;
+}
+.couponNewV2 .couponInfo .expand[data-v-53063320] {
+  background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDEydjEySDB6Ii8+PHBhdGggZD0iTTYgNy4xMjFMMy4xNzIgNC4yOTMgMi40NjQgNWwzLjE4MiAzLjE4MmEuNS41IDAgMDAuNzA4IDBMOS41MzYgNWwtLjcwOC0uNzA3TDYgNy4xMnoiIGZpbGw9IiM5Nzk3OTciIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L3N2Zz4=) 50% no-repeat;
+}
+.couponNewV2 .couponInfo .retract[data-v-53063320] {
+  background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDEydjEySDB6Ii8+PHBhdGggZD0iTTYgNC44NzlMMy4xNzIgNy43MDcgMi40NjQgN2wzLjE4Mi0zLjE4MmEuNS41IDAgMDEuNzA4IDBMOS41MzYgN2wtLjcwOC43MDdMNiA0Ljg4eiIgZmlsbD0iIzk3OTc5NyIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9nPjwvc3ZnPg==) 50% no-repeat;
+}
+.couponNewV2 .couponState[data-v-53063320] {
+  float: left;
+  position: relative;
+  width: 1.7rem;
+  height: 100%;
+  border-bottom-left-radius: .08rem;
+  border-top-left-radius: 0.08rem;
+}
+.disabledState[data-v-53063320] {
+  background-color: #eee !important;
+}
+.disabledState .couponValue[data-v-53063320] {
+  background: #cdcdcd !important;
+}
+.white_bg[data-v-53063320] {
+  background-color: #fff !important;
+}
+.disabledHint[data-v-53063320] {
+  width: .28rem;
+  margin-right: 0.1rem;
+}
+.couponWrap_box[data-v-230a6b92] {
+  width: 6.9rem;
+  margin-bottom: .24rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.couponWrap_box[data-v-230a6b92]:last-child {
+  margin-bottom: 0;
+}
+.couponWrap_box .detail_info[data-v-230a6b92] {
+  padding: .32rem;
+  background-color: #fffaf4;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 0 0 4px 4px;
+  color: #505050;
+  font-size: 0.2rem;
+}
+.couponNewV2[data-v-230a6b92] {
+  position: relative;
+  width: 6.9rem;
+  height: 2.04rem;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.couponNewV2 .couponValue[data-v-230a6b92] {
+  float: left;
+  width: 2.2rem;
+  height: 2.04rem;
+  background: -webkit-gradient(linear, left top, right top, from(#ffb073), to(#ff9d52));
+  background: linear-gradient(90deg, #ffb073, #ff9d52);
+  border-right: 1px dashed rgba(255, 155, 44, 0.4);
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 4px 0 0 4px;
+}
+.couponNewV2 .couponValue .couponPrice[data-v-230a6b92] {
+  position: relative;
+  width: 100%;
+  height: .9rem;
+  margin: .2rem auto 0;
+  font-size: .64rem;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+  line-height: 0.9rem;
+}
+.couponNewV2 .couponValue .couponPrice .fontSmall[data-v-230a6b92] {
+  font-size: 0.48rem !important;
+}
+.couponNewV2 .couponValue .couponPrice .fontLastSmall[data-v-230a6b92] {
+  font-size: 0.32rem !important;
+}
+.couponNewV2 .couponValue .couponPrice .fixedfont[data-v-230a6b92] {
+  font-size: 0.24rem !important;
+}
+.couponNewV2 .couponValue .couponPrice span[data-v-230a6b92] {
+  position: relative;
+  display: inline-block;
+}
+.couponNewV2 .couponValue .couponPrice .discountFont[data-v-230a6b92] {
+  font-size: .32rem;
+  margin-left: 0.02rem;
+}
+.couponNewV2 .couponValue .couponUseCondition[data-v-230a6b92] {
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+  color: #fff;
+}
+.couponNewV2 .couponInfo[data-v-230a6b92] {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  float: left;
+  width: 3rem;
+  height: 100%;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .32rem 0 .32rem .24rem;
+  border-bottom-right-radius: .08rem;
+  border-top-right-radius: .08rem;
+  color: #888;
+  font-size: 0.2rem;
+}
+.couponNewV2 .couponInfo span[data-v-230a6b92] {
+  display: inline-block;
+}
+.couponNewV2 .couponInfo .couponName[data-v-230a6b92] {
+  width: 100%;
+  line-height: .3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: .16rem;
+  color: #505050;
+  font-size: 0.24rem;
+}
+.couponNewV2 .couponInfo .couponUseTime[data-v-230a6b92] {
+  width: 100%;
+  height: .28rem;
+  line-height: .28rem;
+  font-size: 0.2rem;
+}
+.couponNewV2 .couponInfo .moreInfo[data-v-230a6b92] {
+  vertical-align: bottom;
+  padding: 0.02rem 0;
+}
+.couponNewV2 .couponInfo .operateBtn[data-v-230a6b92] {
+  width: .24rem;
+  height: .24rem;
+  cursor: pointer;
+}
+.couponNewV2 .couponInfo .expand[data-v-230a6b92] {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAxElEQVRIS+2TTQrCMBCF3+y8ixdx6ymcQEDBcwgKgYyncOtFvIu7kUALQfIzFroQ0lUpM+/rey8hrPzQyvoYgG7CI6LlEYUQtt77V1cBQGu22IGIXFX1QER7Zn62ICKyU9UHEd2Z+fQ92wIcAbxbkFkcwIaIbmZA+ovJRRViEU86zWNag1jFu4CSk/QtZd6KJe/BdNFyJ9NyNXNTyaVTk0FQK7S0Z3IwL8YYz+ndOXex3A9TB1ah2txPDpbABqCb2v9H9AFiqm0ZIKEJ/QAAAABJRU5ErkJggg==) 50% no-repeat;
+}
+.couponNewV2 .couponInfo .retract[data-v-230a6b92] {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAsklEQVRIS+2SQQrCMBBF83fepRdx6ymcQEDBcwgWApmewq0X8S7uRgINFGky46K4MF1P3yOPD7fxh435rgvUwn+WKKV0yU2891e1zXxgTsTMNxE55f8AjER0tkhMggX8NUN3VokqWMIBHLJARO7OOZOkKfiEE9EjC5h5b5VUBTV46W6VrAo0+DeSluCYm5cstcWUlwCY1pZVTRRjHEIIT8sUW7fqiiyC1k0XqAV7ot8negM3bm0Z8Sy0XgAAAABJRU5ErkJggg==) 50% no-repeat;
+}
+.couponNewV2 .couponState[data-v-230a6b92] {
+  position: relative;
+  float: left;
+  width: 1.7rem;
+  height: 100%;
+  border-bottom-left-radius: .08rem;
+  border-top-left-radius: 0.08rem;
+}
+.couponNewV2 .couponState .getCouponBtn[data-v-230a6b92] {
+  position: absolute;
+  right: .32rem;
+  top: 50%;
+  width: 1.5rem;
+  height: .56rem;
+  margin-top: -0.28rem;
+  border-radius: .28rem;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #fff;
+  text-align: center;
+  line-height: .56rem;
+  font-size: .24rem;
+  background: #ff9849;
+  font-weight: 500;
+}
+.couponNewV2 .couponState .disabledBtn[data-v-230a6b92] {
+  opacity: 0.4;
+}
+.couponNewV2 .couponState .hasReceivedStatus[data-v-230a6b92] {
+  position: absolute;
+  bottom: -0.04rem;
+  right: -0.14rem;
+  width: 1.06rem;
+  height: 1.06rem;
+  background: url(data:image/png;base64,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) 50% no-repeat;
+  background-size: 100%;
+  margin: 0;
+}
+.section-useful-coupons-wrap[data-v-54478324] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-size: .26rem;
+  color: #484848;
+  padding: .3rem .2rem;
+  height: .96rem;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url(data:image/png;base64,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);
+  background-size: 100% 100%;
+}
+.section-useful-coupons-wrap .coupons[data-v-54478324] {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  padding: 0 0.04rem 0 0.12rem;
+}
+.section-useful-coupons-wrap .coupons .tag[data-v-54478324] {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #ff882d;
+  font-size: .28rem;
+  border-radius: .06rem;
+  padding: 0.02rem 0.17rem;
+}
+.section-useful-coupons-wrap .actions[data-v-54478324] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: .56rem;
+  background: #ff9849;
+  border-radius: .28rem;
+  color: #fff;
+  font-size: .24rem;
+  text-align: center;
+}
+.section-useful-coupons-wrap .actions span[data-v-54478324] {
+  color: #999;
+  font-size: 0.28rem;
+}
+.section-useful-coupons-wrap .actions img[data-v-54478324] {
+  width: .15rem;
+  height: .24rem;
+  margin-left: 0.2rem;
+}
+.boxScreen[data-v-54478324] {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+}
+.usefulCouponsBox[data-v-54478324] {
+  position: fixed;
+  width: 100%;
+  height: 9.66rem;
+  bottom: 0;
+  left: 0;
+  background: #f5f6f9;
+  z-index: 10;
+  border-radius: 0.24rem 0.24rem 0 0;
+}
+.couponBoxTitle[data-v-54478324] {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  height: 1.08rem;
+  line-height: .54rem;
+  text-align: center;
+}
+.couponBoxTitle .couponBoxTitleName[data-v-54478324] {
+  font-weight: 500;
+}
+.couponBoxClose[data-v-54478324] {
+  position: absolute;
+  right: .2rem;
+  top: .3rem;
+  width: .4rem;
+  height: 0.4rem;
+}
+.couponBoxClose img[data-v-54478324] {
+  position: relative;
+  top: .1rem;
+  left: .1rem;
+  float: left;
+  width: .24rem;
+  height: 0.24rem;
+}
+.usefulCouponsList[data-v-54478324] {
+  width: 100%;
+  height: 8.26rem;
+  overflow: scroll;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0 .32rem;
+  -webkit-overflow-scrolling: touch;
+}
+.successBox[data-v-54478324] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: .1rem;
+  padding: .16rem .32rem;
+  font-size: .28rem;
+  z-index: 11;
+  color: #fff;
+}
+.successIcon[data-v-54478324] {
+  width: .98rem;
+  height: .7rem;
+  margin-top: .5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.successIcon img[data-v-54478324] {
+  float: left;
+  width: 100%;
+  height: 100%;
+}
+.successWord[data-v-54478324] {
+  width: 100%;
+  height: .33rem;
+  margin-top: .2rem;
+  text-align: center;
+}
+.conponsBarShow[data-v-54478324] {
+  float: left;
+  margin-left: 0.2rem;
+}
+.conponsBarItem[data-v-54478324] {
+  position: relative;
+  float: left;
+  margin-right: .2rem;
+  overflow: hidden;
+}
+.coupon-select-box[data-v-197e8838] {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  z-index: 11;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-flow: column;
+  -ms-flex-flow: column;
+  flex-flow: column;
+  width: 100%;
+  height: 9.28rem;
+  background-color: #f5f6f9;
+  border-radius: 0.24rem 0.24rem 0 0;
+}
+.coupon-select-box .coupon-header[data-v-197e8838] {
+  position: relative;
+  width: 100%;
+  height: 1.2rem;
+  line-height: .6rem;
+  text-align: center;
+}
+.coupon-select-box .coupon-header .coupon-box-close[data-v-197e8838] {
+  position: absolute;
+  width: .4rem;
+  height: .4rem;
+  right: .2rem;
+  top: 0.3rem;
+}
+.coupon-select-box .coupon-header .coupon-box-close img[data-v-197e8838] {
+  float: left;
+  position: relative;
+  width: .24rem;
+  height: .24rem;
+  top: .1rem;
+  left: 0.1rem;
+}
+.coupon-select-box .coupon-tab_warp[data-v-197e8838] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-items: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+  height: .96rem;
+  font-size: .32rem;
+  text-align: center;
+  background-color: #fff;
+  margin-bottom: 0.24rem;
+}
+.coupon-select-box .coupon-tab_warp span[data-v-197e8838] {
+  display: block;
+}
+.coupon-select-box .coupon-tab_warp .tabItem[data-v-197e8838] {
+  position: relative;
+  width: 50%;
+  height: .96rem;
+  line-height: .96rem;
+  text-align: center;
+  cursor: pointer;
+}
+.coupon-select-box .coupon-tab_warp .greyColor[data-v-197e8838] {
+  color: #999;
+  font-size: 0.28rem;
+}
+.coupon-select-box .coupon-tab_warp .activeBorder[data-v-197e8838] {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: .4rem;
+  height: .04rem;
+  background: #09bb07;
+  border-radius: 0.03rem;
+}
+.coupon-select-box .coupon-list[data-v-197e8838] {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .32rem;
+  height: 6.2rem;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
+}
+.coupon-select-box .coupon-list .coupon-item[data-v-197e8838] {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 6.9rem;
+  margin-bottom: .3rem;
+  border-radius: 4px;
+  background: #fff;
+}
+.coupon-select-box .coupon-list .coupon-item .coupon-choose-box[data-v-197e8838] {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 100%;
+  border-radius: 0 0.24rem 0.24rem 0;
+}
+.coupon-select-box .coupon-list .coupon-item .coupon-choose-box .coupon-choose[data-v-197e8838] {
+  width: .4rem;
+  height: .4rem;
+  border-radius: 50%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAoCAYAAACIC2hQAAAEBElEQVRYR9WZTWxUVRTHf2dApBo3okmJJMQoWGth4UcQRG3RmE5FIWoNCxMTo3YGS4wfia0RU+MCFu4kTomJG00MlgWx7TxdGF1CwFVBaQyKUO0o0xaQtkwpc819b17fm+l8vDuvkM5dzvzPOb937r3nfglVNNVDhJVtD0G2BSUPAPcAK4Fbcu7+A0aBYUT9DJEfGU0elR6yVYSzTcTEUCW23gHZTkS9BKwysQVGUPIVRPZJfOAvQ9tgoGrfEytYsuxjhFeAG02DFOgzKL7g6sxu6fxhLKivihlVidYdiHwK3BbUaUBdGuiUmHUgiL4kqOppXkp9nQaMBXEUQtNLanqX9Pw0W85HUVD1TXsd45N9oJ4OAWBgKoPcenO7vNg3XcpoHqiTyZsOXT9IF00GSU1tL5XZ+aC90cR16O5SieuVmBUv9mceaG7ifG3QZ9dCuqPYBJsDtUvQ0mUnr8HsNv2YNLMzDYWlywNNRD9DKJp200ih9YqExK2dfj82qL3iyNVTC1DMQzPmHGRQS+7yr2A50LY9iOpaqChl/UgENr8BdzfD0CE49mVxuZK9Ek92z9UEe4NRH/2zirXb/Ls0ZMu7sKbZsc3OwufbdJ8W8zVCylrtbmRE7W/bgFKHzaMaWohA8zuwdotnePoIfP9RaUciD0tH8ogWiNrf2oWSPYZhDeUCLW/B2ic9u9HjkPwQZi+XAVXd0vHdXgc0ET2I8LxhZAO5wONvQsNTnk3qBCR3w5UykI76oMSsdge0NzoENFWMfEMdrLofUr/A9ERFuSMQeGwX3Nvqg/wVkh/AlZLLut/3cYlZ61zQc4GK/LZPoL4Rps9DfxdMnKkM+2gnNLZ5un9OwqCGnKps6yjSErNud0F1/itvhl8+AMtzJ42pCQf2/NnSATfvhPu2ev//O+xAzkwGhdS6jMSs5Waga7ZAy9ugS4xuGvbb9+DCyPzAj8Sh6Rnv93O/wcD7ppDzQIN1vTZraHXGnC41uk2OQ7+G9R2BNr0O67Z7kOlTMNANmUsmmXS1eV0fbDK5pnrM6ZVlDnbMyezFv2Hjq7D+OR/k7zlIfSitqg1JzFrvdn0f8IKRGz32dPe6sJfScOYoNEY9N2N/OJCXLxq5LhD7ylO1Bb/pWdjU4cH6I4yfhn4NeSEMpC6evoIfZgnVY3Hja/mwumzpiqDLWNiWt4SG3ZToManHpm4TZ3OQQReEsl+SvynRUpUIuc1bvQFW3AknkpAJNSY98sJtngNaIxtnB7YGjiI2aK0c7pys2vdMi/u47I5iVQsXEHZWa+VKx4athUuyuSFQC9eO/vVi0V/k5sHWwtV4fnYX+WND4dYh7/kmKw8i9vNNfcHzTQrFMBF1bCGeb/4HqVWkOPXvtUcAAAAASUVORK5CYII=);
+  background-size: 100% 100%;
+}
+.coupon-select-box .coupon-list .coupon-item .coupon-choose-box .coupon-unchoosed[data-v-197e8838] {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAoCAYAAACIC2hQAAADzElEQVRYR9WZO2zbZhDH/0fRSA3YMvySW9iyDQRwMqSGQLJQVs9dCrQBMnTq1BbJngyZMsS7gzhTpgJFkQxZPHuNUJI24AyNH0PhFC5kd7Dlt2hecIyoUDIlkZRSWNoE3uPHu/vuO34fIcGPmRXLsr5RFGUOgM7MNwB8RUT9Yo6ZSwB2iOgdAMt13WVd1/8kIjeBO0+F4iiurq6OO45zD8CPRDQRR5eZ3wP4TVXVp7lc7p84upFBC4XCcE9Pz2MAPzHztbhOgvJEdAbgRblcfpTP5/+LaqtlRG3bvsvMCwBGohqNKLeXSqXu5XK5P6LINwRdXl5W+/v7F4jo5yiGksow8/NSqXR/bm7OaWYjFHR7e7u3WCy+BPBtUoCYekuZTOZONps9aaR3CVQimU6nX/+PkD7b0sHBwXeNInsJ1DTNxc+d7kZRkzIwDOOXsOc1oJWF83vMtHVUPJVK3Q1bYFVQaUGqqv71GVZ33BfZcxznZn3rqoLatv2MmUPDHtdTu/JEtKhp2q81/Vf+yI7juu5Wu828XUBfXzYFRVGuB3cwL6KmaT4hogedctTKzuTkJAYHB1EsFrGzsxMqzszzhmE8rMJXBoy/4+7drWAaPZ+ensbQ0JD3mJmxsrLSCPS9rutT/iBDpmnmiehNUsdx9KampjA8PFxV2d/fx9bWVkMTzHzbMIyCCJBt2w+Y+Ukch0lk6yFLpZIH6bqNJz8ieqhp2rwHalnWKwDfJ3EeVUdqcmTk00xzeHiIzc3NppAeHNErTdPu+KBrAG61cqooCtLpNMSJ4zSdH2pMJYWsGHmr6/rXPuhulCY/MzODvr4+lMtlbGxs4PT0tNW7IZvNYnR0tCoXNZIBw3u6rnsGpEZPo/TP2dlZqKrq2RDY9fV1nJ3JDBz+q4c8Ojry0n1xcdHyBX0B6aeapn0RC1RaiiwIoo+bWTPYiYkJZDKZKlASyEqNfgK1LCtS6kVRWovUXDPYesjj42OvVOJEMjT1lmVFWky+sqxeSasPe35+7oFIGYyPj2NsbKzqp01IsbOm6/qsn/qXzPxD5MKRlRcCK807uHBOTk68Ok4YSQ+npj0lbfgCJWn2Ixt8UYGUKMdpY2GBqmn47WyhYbCdghTwmi203aFEVrdEVn4dhqwdSsRBu2PewMAAent7sbu721ZNBtN/acyTh10zOAtsV3yKCGjXfNxVoirnTFf7c9kv5K44gBDYrjnSEdiuOCTzS6Arjh2DjffKH+QGYbviaDwIfOUvG+pHsOD1DTMbAOT65su665t/AbwjIrMT1zcfAJ/hPke4T6SiAAAAAElFTkSuQmCC);
+  background-size: 100% 100%;
+}
+.coupon-select-box .coupon_emptypage[data-v-197e8838] {
+  text-align: center;
+  font-size: .32rem;
+  color: #adadb4;
+}
+.coupon-select-box .coupon_emptypage .coupon_emptyImg[data-v-197e8838] {
+  width: 4.8rem;
+  height: 4.4rem;
+  margin: .3rem auto 0;
+  background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSI1MCUiIHkxPSIwJSIgeDI9IjUwJSIgeTI9IjI2LjMyNiUiIGlkPSJiIj48c3RvcCBzdG9wLWNvbG9yPSIjRTFFMUVDIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCB4MT0iNTAlIiB5MT0iLTExLjE3NiUiIHgyPSI1MCUiIHkyPSI5NC4zNDIlIiBpZD0iZCI+PHN0b3Agc3RvcC1jb2xvcj0iI0M4QzhEQSIgc3RvcC1vcGFjaXR5PSIuOTgiIG9mZnNldD0iMCUiLz48c3RvcCBzdG9wLWNvbG9yPSIjRjdGN0ZCIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCB4MT0iNTAlIiB5MT0iMCUiIHgyPSI1MCUiIHkyPSIxNTcuMDM0JSIgaWQ9ImUiPjxzdG9wIHN0b3AtY29sb3I9IiNFNUU1RUIiIG9mZnNldD0iMCUiLz48c3RvcCBzdG9wLWNvbG9yPSIjRjRGNEY3IiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCB4MT0iNTAlIiB5MT0iMCUiIHgyPSI1MCUiIHkyPSIxMzYuMTgyJSIgaWQ9ImYiPjxzdG9wIHN0b3AtY29sb3I9IiNFMkUyRTkiIG9mZnNldD0iMCUiLz48c3RvcCBzdG9wLWNvbG9yPSIjRjNGM0Y2IiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjxwYXRoIGlkPSJhIiBkPSJNMCAwaDI0MHYyMjBIMHoiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48bWFzayBpZD0iYyIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjwvbWFzaz48ZWxsaXBzZSBmaWxsPSJ1cmwoI2IpIiBtYXNrPSJ1cmwoI2MpIiBjeD0iMTIwIiBjeT0iMjI1IiByeD0iMTM3IiByeT0iMTA5Ii8+PGVsbGlwc2UgZmlsbD0iI0Q3RDdFNSIgbWFzaz0idXJsKCNjKSIgY3g9IjEwMS41IiBjeT0iMTMxIiByeD0iMTQuNSIgcnk9IjIiLz48cGF0aCBkPSJNMTUzIDE3YTYgNiAwIDAxNiA2djk2YTYgNiAwIDAxLTYgNmgtMjQuODYxYy0uODEgMC0xLjUwNy0uNTA4LTEuODM2LTEuMjQ4YTcuOTg4IDcuOTg4IDAgMDAtMTQuNjA2IDBjLS4zMjkuNzQtMS4wMjYgMS4yNDgtMS44MzYgMS4yNDhIODVhNiA2IDAgMDEtNi02VjIzYTYgNiAwIDAxNi02aDI0Ljg2MWMuODEgMCAxLjUwNy41MDggMS44MzYgMS4yNDhhNy45ODggNy45ODggMCAwMDE0LjYwNiAwYy4zMjktLjc0IDEuMDI2LTEuMjQ4IDEuODM2LTEuMjQ4SDE1M3pNODkuNSA0N2ExLjUgMS41IDAgMDAwIDNoNmExLjUgMS41IDAgMDAwLTNoLTZ6bTE3IDBhMS41IDEuNSAwIDAwMCAzaDdhMS41IDEuNSAwIDAwMC0zaC03em0xOCAwYTEuNSAxLjUgMCAwMDAgM2g3YTEuNSAxLjUgMCAwMDAtM2gtN3ptMTggMGExLjUgMS41IDAgMDAwIDNoNmExLjUgMS41IDAgMDAwLTNoLTZ6bS0yNi45ODQgMzUuNjdjLS40NDIgMS4zNTItMS4wNCAyLjQ0NC0xLjgyIDMuMjc2LTEuMDQgMS4wMTQtMi41MjIgMS45NS00LjQ5OCAyLjgwOGwxLjU2IDEuOTVjMi4yMS0xLjA2NiAzLjg3NC0yLjI2MiA0Ljk5Mi0zLjYxNC44NTgtMS4wOTIgMS41Ni0yLjU3NCAyLjA4LTQuNDJoNS44NzZjLS4xMDQgMi4zNC0uMzM4IDMuODQ4LS42NSA0LjU3Ni0uMzEyLjY3Ni0uOTM2IDEuMDQtMS45MjQgMS4wNC0xLjExOCAwLTIuMzE0LS4wNTItMy42MTQtLjEwNGwuNjUgMi4zMTRoNC4xNmMxLjA0LS4wNTIgMS44Mi0uMzkgMi4zMTQtLjk2Mi40OTQtLjU5OC44NTgtMS42MzggMS4wNjYtMy4xNDYuMTU2LTEuMzUyLjI4Ni0zLjA0Mi4zNjQtNS4xMjIuOTg4LjgwNiAyLjEzMiAxLjU4NiAzLjQzMiAyLjM0bDEuNjEyLTIuMDAyYy0yLjcwNC0xLjI0OC00LjcwNi0yLjYyNi01Ljk4LTQuMTZoNS4xMjJ2LTIuMjM2aC0xMi41ODRjLjQxNi0uNzU0LjgwNi0xLjUzNCAxLjE3LTIuMzRoOS45ODR2LTIuMTg0aC0zLjY0Yy43NTQtLjk4OCAxLjQwNC0yLjE1OCAxLjk1LTMuNDU4bC0yLjA1NC0uNzI4Yy0uNTIgMS4zNTItMS4xNyAyLjUyMi0xLjk3NiAzLjU2MmwxLjE0NC42MjRoLTQuNjAyYy4zOS0xLjI0OC43MDItMi41NDguOTYyLTMuOTUybC0yLjQ0NC0uMzEyYTI2Ljg5IDI2Ljg5IDAgMDEtMS4wMTQgNC4yNjRoLTMuNDU4bDEuMzUyLS42MjRhMjUuNTQgMjUuNTQgMCAwMC0xLjc5NC0zLjQ1OGwtMi4xMzIuNzAyYTI3LjA2NCAyNy4wNjQgMCAwMTEuODIgMy4zOGgtMy43N3YyLjE4NGg3LjA5OGMtLjM5LjgwNi0uODMyIDEuNTg2LTEuMzI2IDIuMzRoLTcuMjAydjIuMjM2aDUuNDA4Yy0xLjY5IDEuNzY4LTMuNzcgMy4xNzItNi4yNjYgNC4yMzhsMS4zNTIgMi4wOGEyNC4xMDIgMjQuMTAyIDAgMDA0LjAzLTIuNDQ0djEuMzUyaDMuMjV6bS42NS01LjIyNmg2LjM5NmMuNjI0Ljk4OCAxLjQ1NiAxLjk3NiAyLjQ5NiAyLjkzOEgxMTMuNDFhMjIuNzQ0IDIyLjc0NCAwIDAwMi43NTYtMi45Mzh6IiBmaWxsPSJ1cmwoI2QpIiBtYXNrPSJ1cmwoI2MpIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIgMTE5IDcxKSIvPjxnIG1hc2s9InVybCgjYykiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1NyAxMDUpIj48cGF0aCBkPSJNMTAgMTIuNDEyQzEwIDkuNTE5IDguNjE3IDUuODI4IDUuODUxIDEuMzRhMSAxIDAgMDAtMS43MDIgMEMxLjM4MyA1LjgyOCAwIDkuNTE5IDAgMTIuNDEyYzAgNC43NjMgMTAgNC43NjMgMTAgMHoiIGZpbGw9InVybCgjZSkiLz48cmVjdCBmaWxsPSIjRDdEN0U1IiB4PSI0LjM3NSIgeT0iMTEuNSIgd2lkdGg9IjEuMjUiIGhlaWdodD0iMTEuNSIgcng9Ii42MjUiLz48L2c+PC9nPjxwYXRoIGQ9Ik0xODUgMTEzLjk2NWMwLTUuMTExLTIuNzI0LTExLjY5Ny04LjE3MS0xOS43NThhMSAxIDAgMDAtMS42NTggMGMtNS40NDcgOC4wNi04LjE3MSAxNC42NDctOC4xNzEgMTkuNzU4IDAgOC4wNDcgMTggOC4wNDcgMTggMHoiIGZpbGw9InVybCgjZikiIG1hc2s9InVybCgjYykiLz48cmVjdCBmaWxsPSIjRDdEN0U1IiBtYXNrPSJ1cmwoI2MpIiB4PSIxNzUiIHk9IjExMSIgd2lkdGg9IjIiIGhlaWdodD0iMTgiIHJ4PSIxIi8+PC9nPjwvc3ZnPg==);
+  background-size: 100% 100%;
+}
+.coupon-select-box .coupon-confirm-box[data-v-197e8838] {
+  width: 100%;
+  height: 1.12rem;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .12rem .32rem;
+  background: #fff;
+}
+.coupon-select-box .coupon-confirm-box .coupon-confirm-btn[data-v-197e8838] {
+  width: 100%;
+  height: .88rem;
+  background: #09bb07;
+  border-radius: .44rem;
+  text-align: center;
+  line-height: .88rem;
+  color: #fff;
+  font-size: 0.28rem;
+}
+[class^=ss-],
+[class^=ss-] * {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+[class*=" icon-icon"],
+[class^=icon-icon] {
+  font-family: iconfont;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+}
+@font-face {
+  font-family: iconfont;
+  src: url("data:application/x-font-woff;charset=utf-8;base64,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") format("woff");
+}
+.iconfont,
+[class*=" icon-icon"],
+[class^=icon-icon] {
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.iconfont {
+  font-family: iconfont!important;
+  font-size: 16px;
+}
+.icon-icon-selected:before {
+  content: "\E62B";
+}
+.icon-icon-pagination-left:before {
+  content: "\E6B1";
+}
+.icon-icon-pagination-right:before {
+  content: "\E6B2";
+}
+.icon-icon-down:before {
+  content: "\E6A0";
+}
+.icon-icon-close:before {
+  content: "\E6A1";
+}
+.icon-icon-status__success:before {
+  content: "\E6A2";
+}
+.icon-icon-status__primary:before {
+  content: "\E6A3";
+}
+.icon-icon-status__warning:before {
+  content: "\E6A4";
+}
+.icon-icon-status__error:before {
+  content: "\E6A5";
+}
+.ss-button {
+  display: inline-block;
+  height: 36px;
+  line-height: 1.5;
+  padding: 0 16px;
+  background: #2a75ed;
+  color: #fff;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: none;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transform: all 0.3s ease-in-out;
+  transform: all 0.3s ease-in-out;
+  font-size: 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.ss-button + .ss-button {
+  margin-left: 10px;
+}
+.ss-button:focus,
+.ss-button:hover {
+  background: #4284ed;
+  border-color: #4284ed;
+}
+.ss-button:active {
+  background: #1367ed;
+  border-color: #1367ed;
+}
+.ss-button__success {
+  background: #2fce63;
+}
+.ss-button__success:focus,
+.ss-button__success:hover {
+  background: #44d272;
+  border-color: #44d272;
+}
+.ss-button__success:active {
+  background: #2ab858;
+  border-color: #2ab858;
+}
+.ss-button__error {
+  background: #fb6161;
+}
+.ss-button__error:focus,
+.ss-button__error:hover {
+  background: #fb7171;
+  border-color: #fb7171;
+}
+.ss-button__error:active {
+  background: #e15757;
+  border-color: #e15757;
+}
+.ss-footer {
+  overflow: hidden;
+}
+.ss-footer-nav {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: .33rem;
+  margin: .56rem 0;
+  width: 100%;
+}
+.ss-footer-nav-item {
+  font-size: .24rem;
+  list-style: none;
+  padding: 0 .15rem;
+  color: #666;
+  cursor: pointer;
+}
+.ss-footer-nav-item:not(:last-child) {
+  border-right: 1px solid #b2b2b2;
+}
+.ss-footer-logo {
+  padding-bottom: .3rem;
+  cursor: pointer;
+  text-align: center;
+}
+.ss-footer-logo--default {
+  height: 0.63rem;
+}
+.ss-footer-logo--custom {
+  height: 0.76rem;
+}
+.ss-footer-logo--custom .ss-footer-logo--first {
+  height: .44rem;
+  margin-bottom: 0.16rem;
+}
+.ss-footer-logo--custom .ss-footer-logo--last {
+  height: 0.3rem;
+}
+.ss-footer-logo img {
+  height: 100%;
+  vertical-align: top;
+}
+</style><style type="text/css">.mt-progress {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  height: 30px;
+  line-height: 30px;
+}
+.mt-progress > * {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  display: -webkit-box;
+}
+.mt-progress *[slot="start"] {
+  margin-right: 5px;
+}
+.mt-progress *[slot="end"] {
+  margin-left: 5px;
+}
+.mt-progress-content {
+  position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+.mt-progress-runway {
+  position: absolute;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  top: 50%;
+  left: 0;
+  right: 0;
+  background-color: #ebebeb;
+  height: 3px;
+}
+.mt-progress-progress {
+  position: absolute;
+  display: block;
+  background-color: #26a2ff;
+  top: 50%;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  width: 0;
+}
+</style><style type="text/css">.vcp-player{position:relative;z-index:0;font-family:Tahoma,\\5FAE\8F6F\96C5\9ED1,\u5b8b\u4f53,Verdana,Arial,sans-serif;background-color:#000}.vcp-player video{display:block;overflow:hidden}.vcp-fullscreen.vcp-player,.vcp-fullscreen video,body.vcp-full-window{width:100%!important;height:100%!important}body.vcp-full-window{overflow-y:auto}.vcp-full-window .vcp-player{position:fixed;left:0;top:0;z-index:2147483647}.vcp-pre-flash,.vcp-video{width:100%;height:100%}.vcp-pre-flash{z-index:999;background:#000;position:absolute;top:0;left:0}.vcp-controls-panel{position:absolute;bottom:0;width:100%;font-size:16px;height:3em;z-index:1000}.vcp-controls-panel.show{-webkit-animation:fadeIn ease .8s;animation:fadeIn ease .8s;animation-fill-mode:forwards;-webkit-animation-fill-mode:forwards}.vcp-controls-panel.hide{-webkit-animation:fadeOut ease .8s;animation:fadeOut ease .8s;animation-fill-mode:forwards;-webkit-animation-fill-mode:forwards}.vcp-panel-bg{width:100%;height:100%;position:absolute;left:0;top:0;background-color:#242424;opacity:.8;filter:alpha(opacity=80);z-index:1000}.vcp-playtoggle{cursor:pointer;position:relative;z-index:1001;width:3em;height:100%;float:left;background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.png)\0}.vcp-playtoggle:focus,.vcp-playtoggle:hover{background-color:#708090;opacity:.9;filter:alpha(opacity=90)}.touchable .vcp-playtoggle:hover{background-color:transparent;opacity:1}.vcp-playing .vcp-playtoggle{background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.png)\0}.vcp-bigplay{width:100%;height:80%;position:absolute;background-color:white\0;filter:alpha(opacity=0);opacity:0;z-index:1000;top:0;left:0}.vcp-slider{position:relative;z-index:1001;float:left;background:#c4c4c4;height:10px;opacity:.8;filter:alpha(opacity=80);cursor:pointer}.vcp-slider .vcp-slider-track{width:0;height:100%;margin-top:0;opacity:1;filter:alpha(opacity=100);background-color:#1e90ff}.vcp-slider .vcp-slider-thumb{cursor:pointer;background-color:#fff;position:absolute;top:0;left:0;border-radius:1em!important;height:10px;margin-left:-5px;width:10px}.vcp-slider-vertical{position:relative;width:.5em;height:8em;top:-5.6em;z-index:1001;background-color:#1c1c1c;opacity:.9;filter:alpha(opacity=90);cursor:pointer}.vcp-slider-vertical .vcp-slider-track{background-color:#1275cf;width:.5em;height:100%;opacity:.8;filter:alpha(opacity=80)}.vcp-slider-vertical .vcp-slider-thumb{cursor:pointer;position:absolute;background-color:#f0f8ff;width:.8em;height:.8em;border-radius:.8em!important;margin-top:-.4em;top:0;left:-.15em}.vcp-timeline{top:-10px;left:0;height:10px;position:absolute;z-index:1001;width:100%}.vcp-timeline .vcp-slider-thumb{top:-4px}.vcp-timeline .vcp-slider{margin-top:8px;height:2px;width:100%}.vcp-timeline:hover .vcp-slider{margin-top:0;height:10px}.vcp-timeline:hover .vcp-slider-thumb{display:block;width:16px;height:16px;top:-3px;margin-left:-8px}.vcp-timelabel{display:inline-block;line-height:3em;float:left;color:#fff;padding:0 9px}.vcp-timelabel,.vcp-volume{height:3em;z-index:1001;position:relative}.vcp-volume{width:3em;cursor:pointer;float:right;background-color:transparent;opacity:.9;filter:alpha(opacity=90)}.vcp-volume-icon{background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.png)\0;display:inline-block;width:3em;height:3em;position:absolute;left:0;top:0}.vcp-volume-muted .vcp-volume-icon{background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.png)\0}.vcp-volume .vcp-slider-vertical{top:-8.4em;left:1em;display:none}.vcp-volume .vcp-slider-track{position:absolute;bottom:0}.vcp-volume:hover .vcp-slider-vertical{display:block}.vcp-volume .vcp-volume-bg{height:8.8em;width:2em;position:absolute;left:.25em;top:-8.8em;background:#242424;display:none}.vcp-volume:hover .vcp-slider-vertical,.vcp-volume:hover .vcp-volume-bg{display:block}.vcp-fullscreen-toggle{position:relative;width:3em;height:3em;float:right;cursor:pointer;z-index:1001;background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.png)\0}.vcp-fullscreen .vcp-fullscreen-toggle{background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.svg);background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.png)\0}.vcp-loading{left:50%;top:50%;margin-top:-3em}.vcp-loading,.vcp-poster{position:absolute;display:none}.vcp-poster{left:0;top:0;overflow:hidden;z-index:1000;width:100%;height:100%}.vcp-poster-pic{position:relative}.vcp-poster-pic.cover,.vcp-poster-pic.default{left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.vcp-poster-pic.cover{width:100%}.vcp-poster-pic.stretch{width:100%;height:100%}.vcp-error-tips{position:absolute;z-index:1001;width:100%;height:4.5em;left:0;top:50%;color:#ff4500;margin-top:-5.25em;text-align:center;display:none}.vcp-clarityswitcher{height:3em;width:3em;cursor:pointer;position:relative;z-index:1001;float:right;background-color:transparent;opacity:.9}.vcp-vertical-switcher-container{width:3em;position:absolute;left:0;bottom:2.4em;background:#242424;display:none}.vcp-vertical-switcher-current{display:block;color:#fff;text-align:center;line-height:3em}.vcp-vertical-switcher-item{display:block;color:#fff;text-align:center;line-height:2em}.vcp-vertical-switcher-item.current{color:#888}.vcp-share>a{width:3em;height:3em;cursor:pointer;background-image:url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/share_btn.png);opacity:.9;display:block}.vcp-share{width:3em;height:3em;position:relative;float:right;z-index:1001}.vcp-vertical-share-container{width:auto;height:auto;position:absolute;background:rgba(36,36,36,.8);padding:.5em;overflow:hidden;display:none}@-webkit-keyframes fadeOut{0%{opacity:1}to{opacity:0}}@keyframes fadeOut{0%{opacity:1}to{opacity:0}}.fadeOut{-webkit-animation:fadeOut ease .8s;animation:fadeOut ease .8s;animation-fill-mode:forwards;-webkit-animation-fill-mode:forwards}@-webkit-keyframes fadeIn{0%{opacity:0}to{opacity:1}}@keyframes fadeIn{0%{opacity:0}to{opacity:1}}.fadeIn{-webkit-animation:fadeIn ease .8s;animation:fadeIn ease .8s;animation-fill-mode:forwards;-webkit-animation-fill-mode:forwards}</style><style type="text/css"></style><style type="text/css">.mint-spinner-fading-circle {
+  position: relative;
+}
+.mint-spinner-fading-circle-circle {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+.mint-spinner-fading-circle-circle::before {
+  content: " ";
+  display: block;
+  margin: 0 auto;
+  width: 15%;
+  height: 15%;
+  border-radius: 100%;
+  -webkit-animation: mint-fading-circle 1.2s infinite ease-in-out both;
+  animation: mint-fading-circle 1.2s infinite ease-in-out both;
+}
+.mint-spinner-fading-circle-circle.is-circle2 {
+  -webkit-transform: rotate(30deg);
+  transform: rotate(30deg);
+}
+.mint-spinner-fading-circle-circle.is-circle2::before {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+.mint-spinner-fading-circle-circle.is-circle3 {
+  -webkit-transform: rotate(60deg);
+  transform: rotate(60deg);
+}
+.mint-spinner-fading-circle-circle.is-circle3::before {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+.mint-spinner-fading-circle-circle.is-circle4 {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.mint-spinner-fading-circle-circle.is-circle4::before {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+.mint-spinner-fading-circle-circle.is-circle5 {
+  -webkit-transform: rotate(120deg);
+  transform: rotate(120deg);
+}
+.mint-spinner-fading-circle-circle.is-circle5::before {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+.mint-spinner-fading-circle-circle.is-circle6 {
+  -webkit-transform: rotate(150deg);
+  transform: rotate(150deg);
+}
+.mint-spinner-fading-circle-circle.is-circle6::before {
+  -webkit-animation-delay: -0.7s;
+  animation-delay: -0.7s;
+}
+.mint-spinner-fading-circle-circle.is-circle7 {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.mint-spinner-fading-circle-circle.is-circle7::before {
+  -webkit-animation-delay: -0.6s;
+  animation-delay: -0.6s;
+}
+.mint-spinner-fading-circle-circle.is-circle8 {
+  -webkit-transform: rotate(210deg);
+  transform: rotate(210deg);
+}
+.mint-spinner-fading-circle-circle.is-circle8::before {
+  -webkit-animation-delay: -0.5s;
+  animation-delay: -0.5s;
+}
+.mint-spinner-fading-circle-circle.is-circle9 {
+  -webkit-transform: rotate(240deg);
+  transform: rotate(240deg);
+}
+.mint-spinner-fading-circle-circle.is-circle9::before {
+  -webkit-animation-delay: -0.4s;
+  animation-delay: -0.4s;
+}
+.mint-spinner-fading-circle-circle.is-circle10 {
+  -webkit-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+.mint-spinner-fading-circle-circle.is-circle10::before {
+  -webkit-animation-delay: -0.3s;
+  animation-delay: -0.3s;
+}
+.mint-spinner-fading-circle-circle.is-circle11 {
+  -webkit-transform: rotate(300deg);
+  transform: rotate(300deg);
+}
+.mint-spinner-fading-circle-circle.is-circle11::before {
+  -webkit-animation-delay: -0.2s;
+  animation-delay: -0.2s;
+}
+.mint-spinner-fading-circle-circle.is-circle12 {
+  -webkit-transform: rotate(330deg);
+  transform: rotate(330deg);
+}
+.mint-spinner-fading-circle-circle.is-circle12::before {
+  -webkit-animation-delay: -0.1s;
+  animation-delay: -0.1s;
+}
+@-webkit-keyframes mint-fading-circle {
+  0%,
+  39%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+@keyframes mint-fading-circle {
+  0%,
+  39%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.mint-loadmore {
+  overflow: hidden;
+}
+.mint-loadmore-content.is-dropped {
+  -webkit-transition: .2s;
+  transition: 0.2s;
+}
+.mint-loadmore-top,
+.mint-loadmore-bottom {
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+}
+.mint-loadmore-top {
+  margin-top: -50px;
+}
+.mint-loadmore-bottom {
+  margin-bottom: -50px;
+}
+.mint-loadmore-spinner {
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.mint-loadmore-text {
+  vertical-align: middle;
+}
+</style><style type="text/css">/*H5设计规范样式*/
+/*颜色*/
+.EC1 {
+  color: #09BB07;
+}
+.EC1_BG {
+  background-color: #09BB07;
+}
+.EC2 {
+  color: #FF6B67;
+}
+.EC2_BG {
+  background-color: #FF6B67;
+}
+.EC3 {
+  color: #576B95;
+}
+.EC3_BG {
+  background-color: #576B95;
+}
+.EC4 {
+  color: #FF9B2C;
+}
+.EC4_BG {
+  background-color: #FF9B2C;
+}
+.EC5 {
+  color: #353535;
+}
+.EC5_BG {
+  background-color: #353535;
+}
+.EC6 {
+  color: #888888;
+}
+.EC6_BG {
+  background-color: #888888;
+}
+.EC7 {
+  color: #B2B2B2;
+}
+.EC7_BG {
+  background-color: #B2B2B2;
+}
+.EC8 {
+  color: #E5E5E5;
+}
+.EC8_BG {
+  background-color: #E5E5E5;
+}
+.EC9 {
+  color: #EFEFF4;
+}
+.EC9_BG {
+  background-color: #EFEFF4;
+}
+.EC10 {
+  color: #FFFFFF;
+}
+.EC10_BG {
+  background-color: #FFFFFF;
+}
+/*字号*/
+.ET1 {
+  font-size: 0.4rem;
+}
+.ET2 {
+  font-size: 0.36rem;
+}
+.ET3 {
+  font-size: 0.32rem;
+}
+.ET4 {
+  font-size: 0.3rem;
+}
+.ET5 {
+  font-size: 0.28rem;
+}
+.ET6 {
+  font-size: 0.24rem;
+}
+.ET7 {
+  font-size: 0.2rem;
+}
+/*H5设计规范样式 */
+/*全局样式重置*/
+* {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+body {
+  background-color: #efeff4;
+  height: 100%;
+}
+.vue_common {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.vue_common * {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+/*禁止手机端长按菜单*/
+a {
+  -webkit-touch-callout: none;
+}
+/*清除浮动*/
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.clearfix {
+  zoom: 1;
+}
+/*文本不能被选择*/
+button {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/*去除ios自带的点击态*/
+a,
+button,
+input,
+textarea,
+div {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+/**
+文字样式
+ */
+/*列表标题主内容*/
+.t1 {
+  font-size: 0.32rem;
+}
+/*副标题、次要描述*/
+.t2 {
+  font-size: 0.28rem;
+}
+/*辅助信息、弱化内容*/
+.t3 {
+  font-size: 0.24rem;
+}
+/*tab底部等描述信息*/
+.t4 {
+  font-size: 0.22rem;
+}
+/*界面主要描述*/
+.t5 {
+  font-size: 0.32rem;
+}
+/*按钮字号*/
+.t6 {
+  font-size: 0.36rem;
+}
+/*大标题*/
+.t7 {
+  font-size: 0.4rem;
+}
+/*小图标*/
+.t8 {
+  font-size: 0.2rem;
+}
+.c0_white {
+  color: white;
+}
+.c1 {
+  color: #09BB07;
+}
+.c2 {
+  color: #353535;
+}
+.c3 {
+  color: #888888;
+}
+.c4 {
+  color: #576B95;
+}
+.c5 {
+  color: #E64340;
+}
+.c6 {
+  color: #b2b2b2;
+}
+.c7 {
+  color: #2f96e6;
+}
+.c8 {
+  color: #757575;
+}
+.c9 {
+  color: #32cc6e;
+}
+.c10 {
+  color: #3cca72;
+}
+.c11 {
+  color: #6bd06a;
+}
+.c12 {
+  color: #546a94;
+}
+.c13 {
+  color: #1bc570;
+}
+.c14 {
+  color: #00c674;
+}
+.c15 {
+  color: #ff7d2a;
+}
+.c_green_normal {
+  background-color: #09bb07;
+}
+/*清除浮动*/
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.clearfix {
+  zoom: 1;
+}
+/*点击态*/
+/*绿色的点击态*/
+.PressGreenBg:active {
+  background-color: rgba(9, 187, 7, 0.2) !important;
+  border-color: rgba(9, 187, 7, 0.2) !important;
+}
+/*灰色的点击态*/
+.pressGreyBg:active {
+  background-color: rgba(125, 125, 125, 0.2) !important;
+  border-color: rgba(125, 125, 125, 0.2) !important;
+}
+/*蓝色的点击态*/
+.pressBlueBg:active {
+  background-color: rgba(43, 143, 247, 0.2) !important;
+  border-color: rgba(43, 143, 247, 0.2) !important;
+}
+/*通用点击态*/
+.pressActive:active {
+  opacity: 0.5;
+}
+.navi_href {
+  height: 100%;
+  width: 0.64rem;
+  position: absolute;
+}
+.navi_hrefIcon {
+  width: 0.3rem;
+  height: 0.3rem;
+  position: absolute;
+  left: 50%;
+  margin-left: -0.15rem;
+  top: 0.2rem;
+}
+.navi_hrefWord {
+  font-size: 0.18rem;
+  color: #fff;
+  text-align: center;
+  margin-top: 0.6rem;
+}
+.navi_href:nth-child(1) {
+  left: 0.3rem;
+}
+.navi_href:nth-child(2) {
+  left: 1rem;
+}
+.navi_href:nth-child(3) {
+  left: 1.7rem;
+}
+.navi_href:nth-child(4) {
+  left: 2.6rem;
+}
+.naviControl_icon {
+  width: 0.3rem;
+  height: 0.3rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -0.15rem;
+  margin-top: -0.15rem;
+}
+.navi_close {
+  animation: naviClose 0.2s 1;
+  -webkit-animation: naviClose 0.2s 1;
+  /* Safari 和 Chrome */
+}
+.navi_open {
+  animation: naviOpen 0.2s 1;
+  -webkit-animation: naviOpen 0.2s 1;
+  /* Safari 和 Chrome */
+}
+@-webkit-keyframes naviClose {
+  0% {
+    width: 3.4rem;
+  }
+  100% {
+    width: 1rem;
+  }
+}
+@keyframes naviClose {
+  0% {
+    width: 3.4rem;
+  }
+  100% {
+    width: 1rem;
+  }
+}
+@-webkit-keyframes naviOpen {
+  0% {
+    width: 1rem;
+  }
+  100% {
+    width: 3.4rem;
+  }
+}
+@keyframes naviOpen {
+  0% {
+    width: 1rem;
+  }
+  100% {
+    width: 3.4rem;
+  }
+}
+.navi_openIcon {
+  background: url(https://static-resource.xiaoeknow.com/images/navi/nav_open.png) center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.navi_closeIcon {
+  background: url(https://static-resource.xiaoeknow.com/images/navi/nav_close.png) center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+/*图文可选中*/
+.select {
+  -webkit-touch-callout: initial;
+  -webkit-user-select: initial;
+  -moz-user-select: initial;
+  -ms-user-select: initial;
+  user-select: initial;
+}
+/*不可选中*/
+.un_select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/*禁止图片保存的蒙版*/
+.desc-mb {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+img {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+}
+/*全局禁止打印，此样式只对打印时出现的页面有效*/
+@media print {
+  body {
+    display: none;
+  }
+}
+.vux-1px,
+.vux-1px-b,
+.vux-1px-l,
+.vux-1px-r,
+.vux-1px-t,
+.vux-1px-tb {
+  position: relative;
+}
+.vux-1px:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  border: 1px solid currentColor;
+  color: #c7c7c7;
+  height: 200%;
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+}
+.vux-1px-t:before {
+  top: 0;
+  border-top: 1px solid currentColor;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.vux-1px-b:after,
+.vux-1px-t:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  color: #c7c7c7;
+}
+.vux-1px-b:after {
+  bottom: 0;
+  border-bottom: 1px solid currentColor;
+  -webkit-transform-origin: 0 100%;
+  transform-origin: 0 100%;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.vux-1px-tb:before {
+  top: 0;
+  border-top: 1px solid currentColor;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.vux-1px-tb:after,
+.vux-1px-tb:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  color: #c7c7c7;
+}
+.vux-1px-tb:after {
+  bottom: 0;
+  border-bottom: 1px solid currentColor;
+  -webkit-transform-origin: 0 100%;
+  transform-origin: 0 100%;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.vux-1px-l:before {
+  left: 0;
+  border-left: 1px solid currentColor;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleX(0.5);
+  transform: scaleX(0.5);
+}
+.vux-1px-l:before,
+.vux-1px-r:after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  width: 1px;
+  bottom: 0;
+  color: #c7c7c7;
+}
+.vux-1px-r:after {
+  right: 0;
+  border-right: 1px solid currentColor;
+  -webkit-transform-origin: 100% 0;
+  transform-origin: 100% 0;
+  -webkit-transform: scaleX(0.5);
+  transform: scaleX(0.5);
+}
+</style><style type="text/css">body,html{min-height:100%}body{font-family:PingFangSC,Microsoft Yahei,Helvetica,Tahoma,Arial,Hiragino Sans GB,Hiragino Sans GB W3,STXihei,STHeiti,Heiti,SimSun,sans-serif;font-size:.24rem;font-weight:400;-webkit-font-smoothing:antialiased;line-height:1.5;color:#353535;text-shadow:0 0 .01rem hsla(0,0%,50%,.2);background:#f5f7fa}ul{list-style:none}::selection{background-color:#2a75ed;color:#fff}a{text-decoration:none;color:#353535}*,:after,:before{box-sizing:border-box}::-webkit-scrollbar{width:.08rem;height:.08rem}::-webkit-scrollbar-thumb,::-webkit-scrollbar-track{border-right:.01rem solid transparent;border-left:.01rem solid transparent;background-color:rgba(0,0,0,.1)}::-webkit-scrollbar-thumb{-webkit-border-radius:.08rem;border-radius:.08rem;background-color:rgba(0,0,0,.2)}::-webkit-scrollbar-corner{display:block}::-webkit-scrollbar-track:hover{background-color:rgba(0,0,0,.15)}::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.5)}.font-16{font-size:.26rem}.font-30{font-size:.3rem}.font-34{font-size:.34rem}.color-61{color:#616161}.color-21{color:#212121}.color-red{color:#fb4e44}.color-00CD85{color:#00cd85}.color-9E9E9E{color:#9e9e9e}</style><style type="text/css">.t1-clock{font-size:.42rem}.t2-clock{font-size:.34rem}.t3-clock{font-size:.3rem}.t4-clock{font-size:.26rem}.t5-clock{font-size:.24rem}.t6-clock{font-size:.22rem}.c1-clock{color:#00cd85}.c2-clock{color:#576b95}.c3-clock{color:#fb4e44}.c4-clock{color:#212121}.c5-clock{color:#616161}.c6-clock{color:#9e9e9e}.c7-clock{color:#e0e0e0}.c8-clock{color:#f5f5f5}.c9-clock{color:#fff}.c10-clock{color:#d7b683}.PressGreenBg:active{background-color:#00b877}.pressGreyBg:active{background-color:hsla(0,0%,49%,.2)}.pressActive:active{opacity:.5}.tESt{background-color:#359c87}.c1Bg{background:#00cd85}.clearfix:after{content:"";display:table;clear:both}.clearfix{zoom:1}.border-box{box-sizing:border-box}.border-box view{box-sizing:inherit}.vue_common{box-sizing:border-box}.vue_common view{box-sizing:inherit;word-wrap:break-word;word-break:break-all}button:after,button:before{border:0}.no-wrap-common{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.form-submit-button{opacity:0}img{content:normal!important}.iconfont{vertical-align:middle}</style><style type="text/css">html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}article,aside,blockquote,body,button,code,dd,details,div,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hr,input,legend,li,menu,nav,ol,p,pre,section,td,textarea,th,ul{margin:0;padding:0}article,aside,figcaption,figure,footer,header,main,nav,section{display:block}figure{margin:1em .4rem}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit;font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none;max-width:100%}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=reset],[type=submit],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1rem dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto;vertical-align:top;resize:vertical}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-.02rem}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}[hidden],template{display:none}</style><style type="text/css"></style><style type="text/css"></style><style type="text/css">.page[data-v-5c1a6f09]{min-height:100%;width:100%;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}.page[data-v-5c1a6f09],.pageContainer[data-v-5c1a6f09]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;background-color:#f5f5f5}.pageContainer[data-v-5c1a6f09]{max-width:100%;min-height:70vh;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;position:relative;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}.theme-title[data-v-5c1a6f09]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;margin-top:.3rem}.history_theme[data-v-5c1a6f09]{margin-left:.32rem}.wxPraise-top[data-v-5c1a6f09]{margin-top:.3rem}.fold_desc[data-v-5c1a6f09]{padding-bottom:.16rem}.theme_audio_wrap[data-v-5c1a6f09]{border-top:.01rem solid #e0e0e0;padding:.32rem 0}.theme_audio_title[data-v-5c1a6f09]{font-weight:500}.audio_item[data-v-5c1a6f09]{margin-top:.24rem}.punch_diary_wrap[data-v-5c1a6f09]{margin-top:.16rem;background-color:#f5f5f5;padding:0 .24rem;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1}.diary_empty[data-v-5c1a6f09]{text-align:center;padding-bottom:.8rem;line-height:.37rem}.diary_empty_image[data-v-5c1a6f09]{height:1.8rem;width:2.2rem;display:block;margin:.8rem auto .08rem}.diary_title[data-v-5c1a6f09]{font-weight:500;padding-top:.32rem;margin-bottom:.24rem}.footer_container[data-v-5c1a6f09]{margin-bottom:1.04rem}.sender_wrap[data-v-5c1a6f09]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;position:fixed;width:100%;bottom:0;left:0;z-index:99;height:1.04rem;background-color:#fff;border-top:.01rem solid #e0e0e0}.have_punched[data-v-5c1a6f09],.punch[data-v-5c1a6f09],.share[data-v-5c1a6f09]{margin-top:.08rem;line-height:.88rem;border-radius:.08rem}.share[data-v-5c1a6f09]{width:2.06rem;height:.88rem;color:#00cd85;margin-left:.24rem;text-align:center;border:.01rem solid #00cd85;background-color:#fff}.have_punched[data-v-5c1a6f09],.punch[data-v-5c1a6f09]{height:.88rem;margin-left:.24rem;margin-right:.24rem;background-color:#00cd85;color:#fff;text-align:center}.have_punched[data-v-5c1a6f09]{opacity:.4}.marker-wraper[data-v-5c1a6f09]{height:1.57rem;bottom:0;background-color:#09bb07}.canLoadMore[data-v-5c1a6f09],.isLoading[data-v-5c1a6f09]{text-align:center;font-size:.24rem;color:grey;line-height:.8rem}.diary_sort[data-v-5c1a6f09]{float:right;font-weight:400;color:#616161;font-size:.24rem;position:relative}.diary_sort_list_bc[data-v-5c1a6f09]{position:fixed;top:0;left:0;bottom:0;right:0;background:#000;opacity:.1;z-index:200}.diary_sort_list[data-v-5c1a6f09]{position:absolute;background-color:#fff;z-index:201;left:-1.35rem;border-radius:.04rem;top:.46rem;-webkit-box-shadow:0 6px 12px 0 rgba(0,0,0,.2);box-shadow:0 6px 12px 0 rgba(0,0,0,.2)}.diary_sort_list>.sort-item[data-v-5c1a6f09]{width:2.4rem;height:.88rem;padding:.24rem .32rem;font-size:.28rem;color:#353535}.diary_sort_list>.sort-item[data-v-5c1a6f09]:not(:last-child){border-bottom:.01rem solid #eee}.diary_sort_list[data-v-5c1a6f09]:before{content:"";width:0;height:0;position:absolute;bottom:1.7rem;right:15%;border-style:solid;border-width:3px;border-color:#fff #fff transparent transparent;-webkit-transform:rotate(-45deg);transform:rotate(-45deg);-webkit-box-shadow:.5px -.5px .5px rgba(0,0,0,.06);box-shadow:.5px -.5px .5px rgba(0,0,0,.06)}.diary_sort_list>.sort-active[data-v-5c1a6f09]{color:#00cd85}.diary_sort_img[data-v-5c1a6f09]{width:.24rem;height:.2rem;vertical-align:inherit}.t0[data-v-5c1a6f09]{font-size:0}.t24[data-v-5c1a6f09]{font-size:.24rem}.diary-wrapper[data-v-5c1a6f09]{margin-top:.16rem;padding:0 .24rem;-webkit-box-sizing:border-box;box-sizing:border-box;background:#fff;border-top:1px solid transparent}</style><style type="text/css">.loading-box[data-v-0a5c9da6]{font-size:.26rem;position:absolute;top:50%;left:50%;margin:auto;background:rgba(0,0,0,.7);color:#fff;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);z-index:100000;border-radius:.1rem;white-space:nowrap;max-width:6rem;overflow:hidden;text-overflow:ellipsis;text-align:center;padding-top:.73rem;height:2.4rem;width:2.4rem;-webkit-box-sizing:border-box;box-sizing:border-box}.loading-box-small[data-v-0a5c9da6]{width:1.6rem;height:1.6rem;padding-top:.3rem}.loading-icon[data-v-0a5c9da6]{width:.6rem;height:.6rem;margin-bottom:.3rem}.loading-icon-small[data-v-0a5c9da6]{margin-bottom:.1rem}@-webkit-keyframes loadingRotate-data-v-0a5c9da6{0%{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes loadingRotate-data-v-0a5c9da6{0%{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}</style><style type="text/css">.add-wexin-container-clock{position:fixed;width:100%;height:100%;background:rgba(0,0,0,.5);display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;top:0;left:0;z-index:-1;opacity:0;visibility:hidden}.certificate-container{-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}.close-certificate{position:absolute;top:.73rem;right:.81rem;width:.46rem;height:.46rem}.pressActive:active{opacity:.5}.certificate-box{position:relative;margin-top:1.27rem;margin-bottom:.32rem;width:4.8rem;height:8.53rem;border-radius:.08rem;background-color:#dbdbdb}.certificate-btn{width:100%;text-align:center;height:.4rem;color:#fff;line-height:.4rem}.add-wexin-container-clock-show{z-index:100;opacity:1;visibility:visible}</style><style type="text/css">.info_desc_wrap[data-v-7ec40912]{background-color:#fff;padding:.35rem .24rem}.subTitle[data-v-7ec40912]{line-height:.6rem;font-weight:500;font-size:.42rem;color:#212121}.time[data-v-7ec40912]{line-height:.38rem;font-size:.26rem;color:#9e9e9e}.notUser[data-v-7ec40912]{-webkit-box-sizing:border-box;box-sizing:border-box;height:4.65rem;padding-top:1.2rem}.notUser-img[data-v-7ec40912]{width:2.2rem;height:1.8rem;display:block;margin:0 auto}.notUser-desc[data-v-7ec40912]{text-align:center;margin-top:.08rem;font-size:.26rem;color:#9e9e9e}.fold_or_open[data-v-7ec40912]{margin:auto;width:1.2rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;line-height:.6rem;text-align:center}.fold_or_open_wrap[data-v-7ec40912]{height:.8rem;font-size:.3rem;color:#9e9e9e}.icon_more_or_less[data-v-7ec40912]{width:.38rem;height:.38rem;margin-top:.11rem;margin-left:.08rem}.more_or_less[data-v-7ec40912]{height:5.1rem}.more_or_less_wrap[data-v-7ec40912]{overflow:hidden;line-height:1.6}</style><style type="text/css">.body-wrap{width:100%;overflow:hidden;margin-bottom:0;background:#fff}.image-text-item{margin-bottom:.24rem;word-break:break-word}.image-text-item section{max-width:100%!important}.audio-wrap-item{width:100%;height:.96rem;margin-bottom:.24rem;background:#f5f5f5;border-radius:.04rem}.video-item{width:100%;height:3.95rem;margin-bottom:.32rem}.activity-detail-wrap{width:100%;margin-bottom:.24rem;background-color:#fff}.class-info-wrap{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;width:100%;height:1.36rem;padding:.24rem;border-radius:.16rem;background-color:#f5f5f5}.class-image{width:.88rem;height:.88rem;border-radius:.04rem}.class-detail{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;text-align:left;margin:auto .16rem}.class-title{color:#212121;font-size:.3rem;line-height:.42rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:5rem}.class-subTitle{color:#9e9e9e;font-size:.24rem;line-height:.34rem;margin-top:.12rem}.more-icon{width:.38rem;height:.38rem}</style><style type="text/css">.container-warp[data-v-5b04eb24]{width:100%;height:100%;border-bottom:0 solid #eee;background-color:#fff;padding:.32rem;border-radius:.16rem;margin-bottom:.24rem}.container-wrap-bottom[data-v-5b04eb24]{border-bottom:.01rem solid #eee;border-radius:0}.cover-class[data-v-5b04eb24]{text-shadow:none!important}.no-bottome-border-line[data-v-5b04eb24]{border-bottom:none!important}span[data-v-5b04eb24]{word-wrap:break-word}.user-info-wrap[data-v-5b04eb24]{width:100%;height:.8rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;position:relative}.avater[data-v-5b04eb24]{width:.8rem;height:.8rem;border-radius:50%;margin-right:.16rem}.nick-name[data-v-5b04eb24]{color:#212121;margin-bottom:.08rem;font-size:0;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.nick-name-text[data-v-5b04eb24]{display:inline-block;max-width:2.5rem;font-size:.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.publish-time[data-v-5b04eb24]{color:#9e9e9e;font-size:.22rem;margin-right:.3rem}.publish-time-wrap[data-v-5b04eb24]{line-height:.3rem;font-size:0}.container-warp-details[data-v-5b04eb24]{margin-left:0}.diray-text-content[data-v-5b04eb24]{margin-top:.24rem;color:#212121;font-size:.3rem;word-wrap:break-word;font-weight:400;line-height:.46rem;overflow:hidden;font-family:PingFangSC,Microsoft Yahei,Helvetica,Tahoma,Arial,Hiragino Sans GB,Hiragino Sans GB W3,STXihei,STHeiti,Heiti,SimSun,sans-serif}.punch-theme[data-v-5b04eb24]{height:.38rem;font-size:.26rem;color:#576b95;line-height:.38rem;margin-top:.16rem}.teacher-info-wrap[data-v-5b04eb24]{margin-top:.24rem}.teacher-detail[data-v-5b04eb24]{width:100%;height:.48rem;line-height:.48rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.teacher-avater[data-v-5b04eb24]{width:.48rem;height:.48rem;border-radius:50%;margin-right:.16rem}.teacher-name[data-v-5b04eb24]{color:#576b95;font-size:.26rem;margin-right:.16rem}.commenter-name[data-v-5b04eb24]{color:#576b95}.teacher-comment[data-v-5b04eb24]{margin-top:.16rem;font-size:.26rem;color:#616161;line-height:.4rem;background-color:#f5f5f5;-webkit-box-sizing:border-box;box-sizing:border-box;padding:.16rem;position:relative;border-radius:.08rem}.teacher-comment[data-v-5b04eb24]:after{content:"";border-bottom:.08rem solid rgba(87,107,149,.1);border-left:.08rem solid transparent;border-right:.08rem solid transparent;position:absolute;top:-.08rem;left:.16rem}.teacher-comment-text[data-v-5b04eb24]{color:#616161;word-break:break-all}.teacher-comment-audio[data-v-5b04eb24]{margin-top:.16rem!important;width:100%;background-color:#a9a9a9}.like-wrap[data-v-5b04eb24]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;font-size:0;margin-top:.24rem}.like-icon[data-v-5b04eb24]{width:.24rem;height:.24rem;margin-right:.16rem;margin-top:.06rem}.liked-user-list[data-v-5b04eb24]{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;line-height:.38rem;font-size:.26rem;color:#212121}.liked-nick-name[data-v-5b04eb24]{color:#576b95}.comment-list-wrap[data-v-5b04eb24]{margin-top:.08rem;font-size:.26rem}.check-more-comment[data-v-5b04eb24]{margin-top:.08rem;height:.38rem;font-size:.26rem;font-family:PingFangSC-Regular;color:#616161;line-height:.37rem}.action-list[data-v-5b04eb24]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;margin-top:.32rem;margin-bottom:.24rem;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.action-item[data-v-5b04eb24]{width:.32rem;height:.32rem;margin-right:.08rem;vertical-align:bottom}.action-text[data-v-5b04eb24]{margin-right:.48rem;color:#616161;font-size:.26rem;vertical-align:middle}.content-warp .details-head-audio[data-v-5b04eb24]{margin-top:.24rem}.btn-teacher-comment[data-v-5b04eb24]{width:1.4rem;height:.56rem;background:#fff;border:.01rem solid #e0e0e0;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;margin-right:.48rem;position:relative}.gold-border-line[data-v-5b04eb24]{border:0 solid #d7b683}.diary-comment-wrap[data-v-5b04eb24]{margin-left:auto}.teacher-diary-comment[data-v-5b04eb24]{border:.01rem solid #d7b683;color:#d7b683;width:1rem;height:.48rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;border-radius:.24rem}.diary-btn-action[data-v-5b04eb24]{-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;width:.32rem;height:.32rem;-webkit-box-sizing:content-box;box-sizing:content-box;padding:.02rem .15rem .4rem .4rem;margin-right:-.15rem;-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;position:absolute;right:0}.bar-menu-wrap[data-v-5b04eb24]{position:fixed;top:0;left:0;right:0;bottom:0;z-index:101}.bar-menu-back[data-v-5b04eb24]{position:absolute;top:0;left:0;right:0;bottom:0;background:#000;opacity:.6;z-index:100}.menu-alone[data-v-5b04eb24]{font-size:.3rem;padding:.32rem 0;text-align:center;background-color:#fff}.bar-menu[data-v-5b04eb24]{position:absolute;bottom:0;z-index:101;left:0;right:0;-webkit-transition:2s;transition:2s}.fade-enter-active[data-v-5b04eb24],.fade-leave-active[data-v-5b04eb24]{-webkit-transition:bottom .2s ease;transition:bottom .2s ease}.fade-enter[data-v-5b04eb24],.fade-leave-to[data-v-5b04eb24]{bottom:-2.6rem}.top-bor[data-v-5b04eb24]{border-top:.16rem solid #eee}.bottom-bor[data-v-5b04eb24]{border-bottom:.01rem solid #eee}.red-font[data-v-5b04eb24]{color:red}.red[data-v-5b04eb24]{color:#fb4e44}.istopic[data-v-5b04eb24]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;width:.64rem;height:.32rem;background-color:#d7b683;margin-left:.16rem;border-radius:.08rem}.is_topic[data-v-5b04eb24]{display:block;color:#fff;line-height:normal;font-size:.2rem}.permit-line-5[data-v-5b04eb24]{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5}.diary-activity-entrance[data-v-5b04eb24]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;padding:.32rem;background-color:#fff;border-radius:.04rem;background-color:#f5f5f5;margin-top:.32rem;border-radius:.16rem}.diary-activity-image[data-v-5b04eb24]{height:1.2rem;width:1.2rem;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;border-radius:.04rem}.diary-activity-content[data-v-5b04eb24]{padding:0 .2rem;-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;overflow:hidden;height:1.2rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-align-content:space-between;-ms-flex-line-pack:justify;align-content:space-between}.diary-activity-title[data-v-5b04eb24]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;line-height:.46rem}.icon-activity-people[data-v-5b04eb24]{height:.24rem;width:.24rem;margin-right:.1rem;vertical-align:middle}.icon-right[data-v-5b04eb24]{height:.34rem;width:.34rem;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0}.diary-activity-desc[data-v-5b04eb24]{line-height:1;font-size:0}.diary-activity-desc+.diary-activity-desc[data-v-5b04eb24]{margin-left:.24rem}.diary-activity-desc span[data-v-5b04eb24]{vertical-align:bottom;line-height:1}.btn-teacher-comment-wrap[data-v-5b04eb24]{padding-top:.48rem;padding-bottom:.18rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}.icon-btn-teacher-comment[data-v-5b04eb24]{height:.32rem;width:.32rem;margin-right:.08rem}.action-list-li[data-v-5b04eb24]{line-height:.32rem;font-size:0}.vux-1rem-glod[data-v-5b04eb24]:before{border:.01rem solid #d7b683;border-radius:.08rem!important}.vux-1rem-glod[data-v-5b04eb24]:before,.vux-1rem[data-v-5b04eb24]:before{content:" ";position:absolute;left:0;top:0;width:200%;height:200%;-webkit-transform-origin:left top;transform-origin:left top;-webkit-transform:scale(.5);transform:scale(.5)}.vux-1rem[data-v-5b04eb24]:before{border:.01rem solid #e0e0e0;border-radius:.08rem!important}.margin-top-16[data-v-5b04eb24]{margin-top:.16rem}.vux-1rem-b[data-v-5b04eb24]:after{border-bottom:.01rem solid #eee}pre[data-v-5b04eb24]{white-space:pre-wrap}</style><style type="text/css">.alert-component[data-v-f7afdeec]{height:100%;width:100%;position:fixed;top:0;left:0;bottom:0;right:0;overflow:hidden;background:transparent;z-index:999999}.box-mb[data-v-f7afdeec]{width:100%;height:100%;background-color:#000;opacity:.5;position:absolute;top:0;left:0;z-index:9998}.alert-box[data-v-f7afdeec]{width:5.6rem;border-radius:.08rem;overflow:hidden;padding-top:.5rem;margin:auto;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);background-color:#fff;position:absolute;left:0;right:0;z-index:9999}.box-title[data-v-f7afdeec]{text-align:center;font-size:.36rem;color:#000;margin-bottom:.18rem}.box-desc[data-v-f7afdeec]{padding:.52rem;padding-bottom:.6rem;color:#888;font-size:.3rem;line-height:1.5;text-align:center;overflow:hidden}.box-btn-item[data-v-f7afdeec]{border-top:1px solid #e5e5e5;height:1rem}.box-btn[data-v-f7afdeec]{height:100%;font-size:.36rem;background-color:#fff;vertical-align:top;cursor:pointer;outline:none}.btn-confirm[data-v-f7afdeec]{color:#02bb00;width:100%}.btn-cancel[data-v-f7afdeec]{color:#888;border-right:1px solid #e5e5e5}.confirm-btn-item button[data-v-f7afdeec]{width:50%;float:left}.pressGreyBg[data-v-f7afdeec]:active{background-color:hsla(0,0%,49%,.2)}.toast-box[data-v-f7afdeec]{font-size:.26rem;position:absolute;top:50%;left:50%;margin:auto;background:rgba(0,0,0,.7);color:#fff;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-transition:200;transition:200;z-index:1000000;border-radius:.1rem;white-space:nowrap;max-width:6rem;overflow:hidden;text-overflow:ellipsis;text-align:center;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.toast-box-bottom[data-v-f7afdeec]{top:65%}.toast-box-fat[data-v-f7afdeec]{font-size:.28rem;position:absolute;top:50%;left:50%;margin:auto;background:rgba(0,0,0,.7);color:#fff;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-transition:200;transition:200;z-index:1000000;border-radius:.08rem;width:5.3rem;text-align:center;padding:.4rem .22rem}.toast-box_text[data-v-f7afdeec]{padding:.12rem .3rem}.toast-box_success[data-v-f7afdeec]{padding-top:.6rem;height:2.4rem;width:2.4rem;-webkit-box-sizing:border-box;box-sizing:border-box}.toast-success-icon[data-v-f7afdeec]{width:.99rem;height:.72rem;margin-bottom:.3rem}</style><style type="text/css">.img-container[data-v-6731bdcb]{font-size:0;margin-top:.24rem;max-width:100%;padding-bottom:.12rem}.image-wraper[data-v-6731bdcb]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;max-width:100%;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap}.image-type-one[data-v-6731bdcb]{max-width:3.2rem;max-height:3.26rem;background-size:cover;background-repeat:no-repeat;background-position:50%}.img-item-one[data-v-6731bdcb]{max-height:3.2rem;max-width:3.26rem;border-radius:.08rem;overflow:hidden}.img-item-two[data-v-6731bdcb]{width:2rem;height:2rem;overflow:hidden;margin-right:.18rem;margin-bottom:.18rem;border-radius:.08rem;background-size:cover!important}.img-item-two[data-v-6731bdcb]:last-child{margin-right:0}.img-item-three[data-v-6731bdcb]{width:2rem;height:2rem;margin-right:.16rem;margin-bottom:.16rem;border-radius:.08rem;background-size:cover!important}.v-container[data-v-6731bdcb]{width:5.98rem;max-height:3.36rem;margin-top:.12rem;-webkit-box-sizing:content-box;box-sizing:content-box;position:relative}.icon-play[data-v-6731bdcb]{width:.8rem!important;height:.8rem!important;position:absolute;left:50%;top:50%;-webkit-transform:translateX(-50%) translateY(-50%);transform:translateX(-50%) translateY(-50%)}.v-time[data-v-6731bdcb]{width:.96rem;height:.4rem;background:#000;border-radius:.24rem;opacity:.5;position:absolute;bottom:.16rem;right:.16rem;font-size:.22rem;color:#fff;line-height:.3rem;text-align:center;padding-top:.05rem}.no-margin-b[data-v-6731bdcb]{margin-bottom:0}.no-margin-r[data-v-6731bdcb]{margin-right:0}.poster[data-v-6731bdcb]{width:100%;height:100%}.video-wrap[data-v-6731bdcb]{position:relative}.max-video-one[data-v-6731bdcb]{max-width:3rem}.no-poster[data-v-6731bdcb]{background-color:#000;min-height:3rem}.no-poster-no-minheight[data-v-6731bdcb]{background-color:#000}</style><style type="text/css">.comment-enter-active[data-v-0d4ed570],.comment-leave-active[data-v-0d4ed570]{-webkit-transition:opacity .2s ease;transition:opacity .2s ease}.comment-enter[data-v-0d4ed570],.comment-leave-to[data-v-0d4ed570]{opacity:0}.comment-wrapper[data-v-0d4ed570]{z-index:999999;position:fixed;top:0;bottom:0;left:0;right:0;background:#fff}.pageContainer[data-v-0d4ed570]{width:100%;-webkit-transition:all 5s ease;transition:all 5s ease;height:auto;background-color:#f5f5f5}.inputWrap[data-v-0d4ed570]{height:5.28rem;padding:.24rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-sizing:border-box;box-sizing:border-box;background-color:#fff}.input[data-v-0d4ed570]{width:100%;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;line-height:.42rem;border:none;resize:none}.comment_number[data-v-0d4ed570]{text-align:right;font-size:.24rem;line-height:.38rem}.sender_wrap[data-v-0d4ed570]{-webkit-box-sizing:border-box;box-sizing:border-box;width:100%;height:1.04rem;margin-top:.48rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-justify-content:space-around;-ms-flex-pack:distribute;justify-content:space-around;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.cancel[data-v-0d4ed570]{width:32%;background-color:#fff;color:#00cc85;border-radius:.08rem;border:1px solid #00cd85}.cancel[data-v-0d4ed570],.send[data-v-0d4ed570]{height:.88rem;line-height:.88rem;text-align:center}.send[data-v-0d4ed570]{width:62%;background-color:#00cd85;color:#fff;border-radius:.08rem;border:none}</style><style type="text/css">.comment-enter-active[data-v-11e18030],.comment-leave-active[data-v-11e18030]{-webkit-transition:opacity .2s ease;transition:opacity .2s ease}.comment-enter[data-v-11e18030],.comment-leave-to[data-v-11e18030]{opacity:0}.comment-wrapper[data-v-11e18030]{z-index:999999;position:fixed;top:0;bottom:0;left:0;right:0;background:#f5f5f5;overflow-y:auto}.page_container[data-v-11e18030]{width:100%;-webkit-transition:all 5s ease;transition:all 5s ease;height:auto;background-color:#f5f5f5;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}.object_content_wrap[data-v-11e18030],.page_container[data-v-11e18030]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}.object_content_wrap[data-v-11e18030]{background-color:#fff;position:relative;padding:0 .24rem;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;height:1.28rem}.send_user_avatar[data-v-11e18030]{border-radius:50%;width:.8rem;height:.8rem}.object_content_title_wrap[data-v-11e18030]{margin-left:.16rem;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1}.object_content_title[data-v-11e18030]{-webkit-line-clamp:1;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;word-break:break-all}.clock_at[data-v-11e18030]{margin-top:.09rem}.open_details[data-v-11e18030]{margin-left:auto;line-height:.8rem}.input_content_wrap[data-v-11e18030]{background-color:#fff;margin-top:.16rem;padding:.24rem .24rem 0;-webkit-box-sizing:border-box;box-sizing:border-box}.input_textarea_wrap[data-v-11e18030]{-webkit-box-sizing:border-box;box-sizing:border-box;position:relative;height:3.84rem}.input_textarea[data-v-11e18030]{width:100%;height:3.3rem;border:none}.input_text_count[data-v-11e18030]{position:absolute;bottom:.08rem;right:0}.add_material_wrap[data-v-11e18030]{margin-bottom:.5rem}.bottom_btn_wrap[data-v-11e18030]{width:100%;text-align:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;height:1.04rem;position:fixed;bottom:0;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;background-color:#fff;-webkit-box-sizing:border-box;box-sizing:border-box;padding:0 .24rem;z-index:9}.cancel_btn[data-v-11e18030]{width:2.06rem;border-radius:.08rem;-ms-flex-pack:center;-ms-flex-align:center;border:.01rem solid #00cd85}.cancel_btn[data-v-11e18030],.send_btn[data-v-11e18030]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;height:.86rem;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;text-align:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center}.send_btn[data-v-11e18030]{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;margin-left:.16rem;-ms-flex-pack:center;-ms-flex-align:center;border-radius:.08rem;background-color:#00cd85}.division_line[data-v-11e18030]{height:.01rem;background-color:#b2b2b2}.diary_content[data-v-11e18030]{padding:0 .24rem;background-color:#fff}.diary_img_content[data-v-11e18030]{padding-top:.2rem}.audio_content[data-v-11e18030]{padding-top:.3rem}.diary_theme_entrance[data-v-11e18030]{margin-top:.2rem;padding:.07rem .2rem;background-color:#f1f1f1;border-radius:.5rem;display:inline-block;font-size:.26rem;color:#b2b2b2}.punch_card_item_content[data-v-11e18030]{margin-top:.3rem;background-color:#f1f1f1;padding:.3rem;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.punch_card_item_image[data-v-11e18030]{width:1.5rem;height:1.5rem;background:#888}.item_info[data-v-11e18030]{margin-left:.3rem;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1}.item_title[data-v-11e18030]{-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;word-break:break-all;font-size:.32rem;font-weight:700}.item_dynamic[data-v-11e18030]{color:#b2b2b2;font-size:.24rem;margin-top:.7rem}.already_punch_card[data-v-11e18030]{margin-left:auto;width:.3rem;height:.3rem}</style><style type="text/css">.load-title{width:100%;height:.6rem;line-height:.6rem;text-align:center;background-color:#fff;border-top:.01rem solid #eee;color:#888;font-size:.22rem}</style><style type="text/css"></style><style type="text/css">.audio-wrapper[data-v-91c60692]{width:100%;height:100%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}.play-btn[data-v-91c60692]{width:.64rem;height:.64rem}.play-time[data-v-91c60692]{margin:auto .16rem;width:.59rem;height:.3rem;font-size:.22rem;color:#9e9e9e;line-height:.3rem}.progress-background[data-v-91c60692]{position:relative;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;height:.04rem;background:rgba(33,33,33,.1);border-radius:.02rem}.progress-inner-bar[data-v-91c60692]{position:absolute;left:0;top:0;width:100%;height:100%;height:.04rem;background:#00cd85;border-radius:.02rem}.dot[data-v-91c60692]{position:absolute;left:-.2rem;margin-left:-.2rem;top:-.18rem;width:.4rem;height:.4rem;border-radius:50%;z-index:2}[data-v-91c60692]{moz-user-select:-moz-none;-moz-user-select:none;-o-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.img_del_container[data-v-91c60692]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;margin-left:.34rem;margin-right:.34rem}.img_del[data-v-91c60692]{width:.3rem;height:.3rem}.audio-container[data-v-91c60692]{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;height:100%;width:100%;background:#f5f5f5;padding:.16rem;-webkit-box-sizing:border-box;box-sizing:border-box;border-radius:.16rem}</style></head>
+<body ondblclick="return false;">
+
+<!--业务数据-->
+<input id="initData" type="hidden" style="display: none" value="{&quot;wxData&quot;:{&quot;debug&quot;:&quot;false&quot;,&quot;beta&quot;:&quot;false&quot;,&quot;appId&quot;:&quot;wxa46386d571e05bac&quot;,&quot;nonceStr&quot;:&quot;dnmDeyx2Zv&quot;,&quot;timestamp&quot;:1577416660,&quot;url&quot;:&quot;https:\/\/wxa46386d571e05bac.h5.xiaoe-tech.com\/xiaoe_clock\/homework_clock\/ac_5df38a7156f6b_H3uARo6j&quot;,&quot;signature&quot;:&quot;b9b88809f317a336921bf39edf4bf9d79096360d&quot;,&quot;jsApiList&quot;:&quot;\n                [ 'checkJsApi',\n                'onMenuShareTimeline',\n                'onMenuShareAppMessage',\n                'onMenuShareQQ',\n                'onMenuShareWeibo',\n                'onMenuShareQZone',\n                'onVoiceRecordEnd',\n                'startRecord',\n                'stopRecord',\n                'uploadVoice',\n                'playVoice',\n                'stopVoice',\n                'pauseVoice',\n                'chooseImage',\n                'uploadImage',\n                'downloadImage',\n                'downloadVoice' ]\n            &quot;,&quot;need_share&quot;:true,&quot;share_title&quot;:&quot;Mr.Dragon\u9080\u8bf7\u4f60\u6765\u53c2\u4e0e7\u5929\u804c\u4e1a\u89c4\u5212\u4f53\u9a8c\u8425&quot;,&quot;share_desc&quot;:&quot;\u643a\u624b\u89c1\u8bc1\u5f7c\u6b64\u6210\u957f\uff01&quot;,&quot;share_link&quot;:&quot;https:\/\/wxa46386d571e05bac.h5.xiaoe-tech.com\/xiaoe_clock\/homework_clock\/ac_5df38a7156f6b_H3uARo6j&quot;,&quot;share_img_url&quot;:&quot;https:\/\/wechatapppro-1252524126.file.myqcloud.com\/appUgoxOstA5125\/image\/ZGFrYS1lZGl0SHAtY292ZXJJbWctNjcyNTM2OTg.png&quot;,&quot;need_background_play&quot;:false,&quot;voiceId&quot;:&quot;xxxx&quot;,&quot;needGetLocation&quot;:false},&quot;bizData&quot;:{&quot;user_id&quot;:&quot;u_5dfa29c0d98fb_pvO2c9W9mO&quot;,&quot;huidu&quot;:{&quot;open_huidu&quot;:0,&quot;msg&quot;:&quot;&quot;},&quot;version_type&quot;:4,&quot;introduce_url&quot;:&quot;https:\/\/wxa46386d571e05bac.h5.xiaoe-tech.com\/content_page\/eyJ0eXBlIjoyLCJyZXNvdXJjZV90eXBlIjoxNiwicmVzb3VyY2VfaWQiOiJhY181ZGYzOGE3MTU2ZjZiX0gzdUFSbzZqIiwicHJvZHVjdF9pZCI6IiIsImFwcF9pZCI6ImFwcFVnb3hPc3RBNTEyNSJ9&quot;},&quot;commonData&quot;:{&quot;APPID&quot;:&quot;appUgoxOstA5125&quot;,&quot;USERID&quot;:&quot;u_5dfa29c0d98fb_pvO2c9W9mO&quot;,&quot;USERIP&quot;:&quot;113.119.156.22&quot;,&quot;MACHINEIP&quot;:&quot;10.105.228.114&quot;,&quot;WXNICKNAME&quot;:&quot;Mr.Dragon&quot;,&quot;WXAVATAR&quot;:&quot;http:\/\/wechatavator-1252524126.file.myqcloud.com\/appUgoxOstA5125\/image\/compress\/u_5dfa29c0d98fb_pvO2c9W9mO.png&quot;}}">
+
+<!--版本数据-->
+<input id="version_date" type="hidden" style="display: none" value="1">
+
+<!--全局回到首页悬浮按钮控制-->
+<style>
+  .navigation_home_menu {
+    margin: 0;
+    font-size: .24rem; /*防止vue加载css时字体过大*/
+  }
+  .navigation_menu {
+    position: fixed;
+    bottom: 1.89rem;
+    right: 0;
+    height: .6rem;
+    width: 1.58rem;
+    background-color: #353535;
+    opacity: 0.3;
+    z-index: 1000;
+    border-radius: 0.5rem 0 0 0.5rem;
+    overflow: hidden;
+  }
+  .navi_control {
+    position: absolute;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: 2;
+    text-decoration: none;
+    color: #fff;
+  }
+  .navi_home {
+    width: 0.24rem;
+    height: 0.24rem;
+    position: absolute;
+    left: .2rem;
+    top: 50%;
+    margin-left: 0;
+    margin-top: -0.12rem;
+    background: url("/images/navi/homeButtonIcon.png") center center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+  }
+  .navi_home_txt{
+    text-align: right;
+    padding-right: .1rem;
+    line-height: .6rem;
+    font-size: .24rem;
+  }
+</style>
+
+<script>
+  if (true){
+      //默认就是隐藏
+      var menu = document.getElementById("navigation_menu");
+      if(menu)menu.parentNode.removeChild(menu);
+  } else {
+      //显示出来
+      var menu = document.getElementById("navigation_menu");
+      if(menu)menu.style.display = "block";
+  }
+</script>
+
+
+<script type="text/javascript">
+    var menu_init = function () {
+        var bd = document.querySelector('body');
+        var forbid = document.getElementById('forbidPageIndex');
+        var navigation_menu = document.querySelector('#navigation_menu');
+        //账号被封不存在navigation_menu直接返回
+        if(!navigation_menu)return;
+        //黑名单页隐藏
+        if(forbid){
+            navigation_menu.style.display = 'none';
+        }
+        // 事件委托
+        bd.addEventListener('touchend', function(e){
+            e = e || window.event;
+            if (!navigation_menu) {
+                return;
+            }
+            var target = e.target || e.srcElement;
+            var nodeName = target.nodeName.toLocaleLowerCase();
+            // 输入表单时隐藏回到首页，防止ios输入法弹框造成回到首页图标fixed定位错乱
+            if (nodeName == 'input' || nodeName == 'textarea') {
+                target.addEventListener('focus', function() {
+                    navigation_menu.style.display = 'none'; // 隐藏回到首页
+                });
+                target.addEventListener('blur', function() {
+                    navigation_menu.style.display = 'block'; // 隐藏回到首页
+                    if(forbid){
+                        navigation_menu.style.display = 'none';
+                    }
+                });
+            }
+        });
+        return;
+    }
+    window.onload = menu_init;
+</script>
+
+
+<!--真实的页面挂载点-->
+<div id="app"><section data-v-5c1a6f09="" class="page"><!----> <!----> <!----> <!----> <div data-v-5c1a6f09="" class="pageContainer"><!----> <div data-v-5c1a6f09=""><div data-v-5c1a6f09=""><div data-v-7ec40912="" data-v-5c1a6f09="" class="info_desc_wrap"><div data-v-7ec40912="" class="subTitle">工作不是我喜欢的，我该怎么办？</div> <p data-v-7ec40912="" class="time">2019-12-27 00:00 至 2019-12-27 23:59</p> <div data-v-7ec40912=""><div data-v-7ec40912=""><div data-v-7ec40912="" class="more_or_less_wrap fold_desc"><div data-v-5c1a6f09="" data-v-7ec40912=""><div data-v-5c1a6f09="" id="editor_1577416664388" class="body-wrap" data-v-7ec40912=""><div><div class="image-text-item"><p style="line-height: 2em;"><span style="font-size: 15px;"><span style="font-size: 18px;"></span><br></span></p><p style="line-height: 2em;"><span style="font-size: 15px;">第3堂课程：</span><span style="font-size: 15px; color: rgb(192, 0, 0);"><strong>《工作不是我喜欢的，我该怎么办？》</strong></span><span style="font-size: 15px;">，已经完成更新，请及时收听学习，并完成课后作业。</span><br></p><p style="line-height: 2em;"><span style="font-size: 15px;"><span style="caret-color: rgb(191, 191, 191); color: rgb(191, 191, 191); font-size: 15px; text-decoration: underline;">（可选择收听音频，也可以直接查看课程逐字稿）。</span></span></p><p><br></p></div> <!----> <!----> <!----> <!----></div><div><!----> <div class="audio-wrap-item"><section data-v-91c60692="" class="audio-container"><div data-v-91c60692="" class="audio-wrapper"><audio data-v-91c60692="" id="audio1" src="http://wechatapppro-1252524126.file.myqcloud.com/undefined/audio/aefc0195cc7dab193644de57c32f28f7.mp3" preload="preload"></audio> <img data-v-91c60692="" src="/images/xiaoe_clock/audio/play_audio_green.png" class="play-btn"> <span data-v-91c60692="" class="play-time">00:00</span> <div data-v-91c60692="" id="progressBarBgaudio1" class="progress-background"><div data-v-91c60692="" id="progressBar" class="progress-inner-bar" style="width: 0px;"></div> <img data-v-91c60692="" id="progressDot" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/audio/icon_play_dot.svg" class="dot" style="left: 0px;"></div> <span data-v-91c60692="" class="play-time">14:20</span></div> <!----></section></div> <!----> <!----> <!----></div><div><div class="image-text-item"><h3 class="ql-long-1903813"><p style="text-align: center; line-height: 1.5em;"><span style="text-decoration: underline;"><br></span></p><p style="line-height: 1.5em;"><span style="text-decoration: underline;"><br></span></p><p style="text-align: center; line-height: 1.5em;"><span style="text-decoration: none;"><strong><span style="text-decoration: none; font-size: 18px;">第03堂课后作业：</span></strong></span></p><p style="line-height: 1.5em;"><span style="text-decoration: none;"><strong><span style="text-decoration: none; font-size: 18px;"><br></span></strong></span></p></h3><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;">一、听完当天的课程内容；</p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;">二、让自己安静下来，跟随下面的<strong><span style="color: rgb(192, 0, 0);">《兴趣反思评估表》</span></strong>，写下你的<span class="ql-author-1903813">答案</span><span style="text-decoration: underline;">（建议你动手画或者打印出来填写，然后拍照提交作业即可）</span>。</p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;">&nbsp;</p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;"><span style="color: rgb(127, 127, 127);">1. 在过去你的成长经历中：做哪些事情会让你感觉到享受？做哪些事情能让你觉得可以乐此不疲地一直做下去？</span></p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;"><span style="color: rgb(127, 127, 127);">2. 现在的工作里哪些地方无法满足你的兴趣？</span></p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;"><span style="color: rgb(127, 127, 127);">3. 你期待的工作内容和工作状态是什么样子呢？</span></p><p style="margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73); line-height: 1.5em;"><span style="color: rgb(127, 127, 127);"><br></span></p><h2 class="ql-long-1903813"><p style="line-height: 1.5em;"><span class="ql-author-1903813"><img width="1490" height="auto" src="http://wechatapppro-1252524126.file.myqcloud.com/appUgoxOstA5125/image/ueditor/47263600_1576241334.png%21thumbnail"></span></p></h2><p><br></p></div> <!----> <!----> <!----> <!----></div><div><div class="image-text-item"><p style="text-align: center;"><span style="color: rgb(255, 0, 0); font-size: 15px;"><br></span></p><p><span style="color: rgb(255, 0, 0); font-size: 15px;"><br></span></p><p style="text-align: center;"><span style="font-size: 15px;"><strong><span style="font-size: 18px; color: rgb(0, 0, 0); text-decoration: underline;">课程逐字稿</span></strong></span></p><p><span style="font-size: 15px;"><strong><span style="font-size: 18px; color: rgb(0, 0, 0); text-decoration: underline;"><br></span></strong></span></p><p><span style="color: rgb(255, 0, 0); font-size: 15px;"></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">欢迎来到<span style="font-size: 15px; color: rgb(192, 0, 0);"><strong><span style="font-size: 15px; text-decoration: underline;">未来大学·职业规划体验营</span></strong></span>，这是第3堂课程。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">上一堂课程，我们专门剖析了职业引擎中的能力部分，这堂课我们来谈谈兴趣。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我们常常听到“喜欢做什么，就去做什么”、“工作/专业都不是自己喜欢的，每天好难受”。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">类似这样的话语很容易对我们产生误导，让我们误以为找到适合自己的职业，就是单纯凭着自己的喜好。那么有趣的是，很多人喜欢睡觉、吃零食，但是好像并不存在这样的职业。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">就像我在第一堂课程中提到的那样，找到适合自己的职业方向，需要结合你的整个职业引擎，还要考虑外界的航海环境。单纯凭借个人喜好是完全不够的。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">所以这堂课，我想和你重新探讨一下：<strong>职业引擎里的“兴趣”究竟是什么？以及，我们该如何看待兴趣和工作二者之间的关系。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: center; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;<span style="text-decoration: underline; font-size: 18px;"><strong><span style="font-size: 18px; text-decoration: underline; text-align: center; background-color: rgb(255, 217, 0);">兴趣是你的个人特质倾向于做什么</span></strong></span></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="text-decoration: underline; font-size: 15px;"><strong><span style="font-size: 18px; text-decoration: underline; text-align: center; background-color: rgb(255, 217, 0);"><br></span></strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">其实心理学上的「兴趣」是一个非常综合的概念，它结合了你的人格特质、成长经历、自我概念、个人信仰等一系列的内在要素。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">在这里我们不细究学术理论，我给你举一些例子帮助你认识什么是兴趣。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我们可以一起去回顾你小时候（从幼儿到高中）的行为表现。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">有些孩子在早期对于拆解器械、拼装物品表现出了极大的兴趣，他们在这个过程中会感受到无比的喜悦感。再深入一些，有些孩子对于机械本身的结构表现出了乐趣，他们甚至会去研究其中的原理，还试着把结构图画出来；有些孩子则对“如何把一堆散乱的零件复原起来”很有兴趣。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">前一个孩子长大后，很有可能对于研究类的工作表现出兴趣，其他人看似枯燥的工作内容，他却可以沉浸好久。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">后一个孩子长大后，很有可能表现出喜欢挑战和分析解决问题，或者有可能喜欢创造新的东西，如果工作是一成不变的、常规而且琐碎的，对他来说，那样的工作就很痛苦。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">再举个例子，你可能在成长早期，对于“和人打交道”乐此不疲。你总能在身边号召一群伙伴；在一个团队中，你总是大家关注的焦点；你也很懂得和享受，去处理人与人之间的关系。那么你的工作兴趣多半会和人相关。如果你的工作每天没有流动性，而是对着数字、报表，那么你一定会觉得自己被憋疯了。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我有一个朋友，他现在担任某500强公司的关键客户经理。他告诉我他早年做管培生的时候，第一年是在市场部的数据分析岗位。他说他从没料想，工作第一年就是他最黑暗的日子，每天他都要盯着那些数字，确保他们没有出错；然后就是不停地做报表。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">他每天唯一开心的时间，就是在晚饭的时候和其他人部门的人聊天，那会让他觉得能量加满。再到后来，他更加笃定了自己的工作兴趣是从事人和打交道职业：因为帮助客户分析需求，和不同的人交谈，让他感到自己是鲜活的、在成长的。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">后来几经辗转，他在公司内部调岗，后来慢慢成为了关键客户经理。他说，虽然现在的工作压力很大，但是他依然工作得非常开心。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">讲到这里，我相信你对于职业引擎中的「兴趣」有了进一步的理解。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">在心理学上，兴趣可以被简要地分成四个类型：DATA（处理资料）、THING（与物接触）、IDEA（心智思考）、PEOPLE（与人接触）。其中DATA和IDEA相对，THING和PEOPLE相对。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">所以你可以看看自己是哪种类型。更重要的是，你应该现在停下来，想一想：<strong style="color: rgb(190, 26, 29);">在过去你的成长经历中，做哪些事情会让你感觉到享受？做哪些事情能让你觉得可以乐此不疲地一直做下去？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">试着在纸上都把它们一条一条地列下来，等写完的时候，你就会发现，原来你的兴趣指向是这样的。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px; color: rgb(127, 127, 127);"><strong style="color: rgb(165, 165, 165);">备注：这个成长经历可以从你有记忆开始，直到现在。不过华人世界的前18年几乎是被学习考试填满的，所以很难有其他的尝试和探索，所以很多内心的兴趣都是尚未被发现的。如果是这样的话，你可以去集中回顾“大学到现在的工作”这期间的经历。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-center" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: center; font-size: 11pt; color: rgb(73, 73, 73);"><span style="text-decoration: underline; font-size: 18px;"><strong style="background-color: rgb(255, 217, 0);">当你不满足什么，那一定是你在期待什么</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">你看我们刚刚讲到了，什么是「职业引擎」中的兴趣，以及我们该如何去从过去的经历中挖掘出自己的兴趣。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">接下来，我想和你聊聊，如果你感到「现在的工作好像和你的兴趣不搭」，我们该如何面对？</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">如果你正在经历的工作内容，让你感到疲倦、提不起精神，无法得到内心满足，甚至感到痛苦和对抗，那么你就需要深入问自己的内心：<strong style="color: rgb(190, 26, 29);">我正在做的哪些事情，让我陷入了这样的状态？所以我在期待些什么呢？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">这一点很关键，当你觉得手头的什么事情不是你喜欢的时候，你的脑海中一定有另外一个画面的期待；在那个期待里，你做的事情让你感到满足。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我举个例子，我有一个学员叫宋哲，是一个公务员。日常的工作就是写文件、处理资料、帮助来访群众答疑解惑，每天朝九晚五。不过，在其他人眼中稳定的工作，他自己非常不喜欢。平日里他非常喜欢研究商业案例，对于最新的科技企业、商业趋势头头是道。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">他特别期待自己能够像成为那种西装革履的咨询顾问，在不同的城市，帮助不同的客户解决问题。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">你看，这样的对比反差，其实反应了他的工作兴趣并不是那种常规型、事务型的工作，而是他渴望挑战、渴望新的知识摄入，以及帮助客户解决问题。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>所以说当你不满足什么，那一定是你在期待什么。</strong>你可以试着停下来，通过回顾当下的工作内容，来看清自己的兴趣倾向是什么。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>但是除了反思自己真正的兴趣外，我们该怎么面对这种内心的冲突感呢？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我这里有3个心得分享给你：</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="text-decoration: underline; font-size: 15px;"><strong style="color: rgb(190, 26, 29);">一、你现在所处的职业阶段是什么？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">这一点有一些残酷，但也是事实：（那就是）每个人在刚刚进入职场工作的时候，一定是从最基础的工作做起的。<strong>我们把这个阶段叫做职业发展的「生存期」。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">生存期的特点就是你的角色处于一线的执行者，需要处理大量的基础工作，还不排除一些额外、琐碎的工作。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">很多工作1-2年的伙伴，在这个时期会感到痛苦，常有的反应是：所以我做的工作就是这些了吗？</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">需要注意的是，如果你处在这个阶段，切记不能心急。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>首先，一个职业是需要积累的，现在正是你打地基的时候。</strong>你未来如果想要在更高的位置，做更符合你期待的事情，这些经历都是必须的。千万不要误以为自己一上来就是CEO，（哈哈）。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">其次，生存期的主要任务是让你学会：该如何在这个职业世界里生存下来？如何与人相处？如何在一个团队中协作？如何沟通和表达？如何分析和解决问题？（等等这些）都是你要掌握的部分。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>只有度过了生存期，你才能到达发展期、实现期。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px; text-decoration: underline;"><strong style="color: rgb(190, 26, 29);">二、你的工作主体是兴趣所在吗？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">要知道的是，一个职业的工作是由很多部分组成的，里面的内容一定有你喜欢，和你不那么喜欢的。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">比如我之前遇到过一个学员，他自己非常社交恐惧，然后就问我有没有那种不需要和人接触的工作。答案就是，根本不可能有这种工作。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">在一份工作里，我们需要要学着接受这个工作的好、坏两面。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">如果你是一个老师，虽然你很享受在讲台上教书的感觉，但是你一定躲不开处理家长关系、教学材料等，这些都是老师工作的一部分。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">如果你是产品经理，虽然你非常享受去构思产品设计，但是工作汇报、项目管理、需求沟通这些事情都是需要要面对的。</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">所以说，学着接受工作的两面性，就像你的人生中既有惊喜和意外。</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">很多时候，你感觉到的不舒服，可能是因为不擅长、不自信等等这些原因造成的呢。</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>这个时候，你应该问自己：我的工作主体是我的兴趣所在吗？</strong>如果答案是肯定的，那么就积极的面对起来，去解决问题和提升自己。</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px; text-decoration: underline;"><strong style="color: rgb(190, 26, 29);">三、工作之余你可以做些什么？</strong></span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我们常常提到一个概念，那就是职业规划其实是「职业生涯」的规划，也就是职业只是你人生的一部分，在工作之外，你需要学会如何安排自己的时间？如何去满足自己的其他兴趣需求？</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>所以，千万不要把所有的人生期待都放在一份工作上。</strong></span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-center" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: center; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 18px; text-decoration: underline;"><strong style="background-color: rgb(255, 217, 0);">爱好成为工作，需要过两个关卡&nbsp;</strong></span></p><p style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; font-size: 11pt; color: rgb(73, 73, 73);"><br></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">最后一个部分，我想和你谈谈，很多人会提到问题：你说寻求我的兴趣，那么我能不能把我的爱好变成工作呢？</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>事实上，爱好和工作之间存在2个关卡。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我举个简单的例子，我之前有一位学员是互联网产品经理，因为长期的工作压力很大，所以她想要换一个方向。她平日里热爱摄影，就打算说是不是可以转去做全职摄影师。我告诉她，你可以抽几个周末，去一些专业摄影棚做兼职助理，然后再来告诉我你的决定。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">结果几周后，她回来告诉我，我还是做好我的现在的工作吧。因为她发现原来要成为一个摄影师，需要学习平面构图、色彩理论，甚至有一些数学计算在里面，她说这完全超出了自己的想象。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">这个呀，就是</span><span style="font-size: 15px; text-decoration: underline;"><strong style="color: rgb(190, 26, 29);">爱好和工作之间，你必须克服的第一关：专业关。</strong></span><span style="font-size: 15px;"><strong>所谓工作，就是在你的专业背景上有所要求。</strong>就好像不是谁都可以成为金融师、谁都可以成为好的产品经理是一个道理。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">另外一个例子，我还有一个学员平时空闲喜欢用PS做一些有趣的设计图，纯粹是基于喜欢和好奇。后来他想转行过去，成为一个全职设计师。结果他发现，原来做设计不是做出好看的图就好了，他每周竟然有百分之二三十的时间，是在和客户沟通需求。而客户的需求总是把他折磨到奔溃。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px; text-decoration: underline;"><strong style="color: rgb(190, 26, 29);">这个就是爱好和工作之间是第二关：社会关。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;"><strong>一份工作是需要回应社会价值的。</strong>也就是你做出来的东西需要满足交付对象的需求。<strong>一旦产生需求，就要有要求。一旦有要求，工作就不是随便做做而已。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">所以，关于是否可以把爱好变成工作，<strong>我们千万不要用幻想代替了实际。</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">如果你真的想要把爱好变成工作，尤其是全职工作，那你就要做好克服专业关和社会关的准备。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-center" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: center; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 18px; text-decoration: underline;"><strong style="background-color: rgb(255, 217, 0);">回顾我们都学到了什么？</strong></span></p><p class="ql-align-center" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: center; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">好了，以上就是本堂课的所有内容了。我为你简要总结一下今天的内容。首先，职业引擎中的兴趣不是单纯的喜好那么简单，它是综合的你的特质、经历等一系列内在因素。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">如果你想要挖掘自己的工作兴趣，你可以这样做，<strong>回顾过去的成长经历，然后看看做哪些事情会让你感觉到享受？做哪些事情能让你觉得可以乐此不疲地一直做下去？</strong></span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">当你回到自己当下的工作时，如果你觉得不是喜欢做的事情，你可以看看：哪些事情感到厌恶感？相反的，你的期待是什么？</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">这样可以帮助你进一步探索自己的兴趣。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><strong><span style="font-size: 15px;">这里有三个心得，帮助你面对工作和兴趣之前的冲突：① 明白自己所处的职业阶段，切不可太过心急；② 如果工作主体本身是你的兴趣，那么就要学会接受不喜欢的部分；③ 不要把所有期待都寄托一份工作上，学会利用自己工作外的时间。</span></strong></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">接着，我们提到了爱好和工作之间的距离。如果你真的想把爱好变成工作，那么你就需要做好充分准备去面对「专业关」和「社会关」。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">最后，我特别希望你能找到适合自己的职业方向。只有适合你的职业方向，才能把你的兴趣价值发挥到最大，你也能感到享受和开心。</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify ql-long-1903813" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">好了，下一节课，我们会聚焦很多职场人过去、现在、将来都会面对的问题：如何跳槽转职？什么时候才是最佳的转职跳槽期？</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">&nbsp;</span></p><p class="ql-align-justify" style="line-height: 1.7; margin-bottom: 0pt; margin-top: 0pt; text-align: justify; font-size: 11pt; color: rgb(73, 73, 73);"><span style="font-size: 15px;">我们下次见吧。</span></p><p><span style="color: rgb(255, 0, 0); font-size: 15px;"><br></span><br></p></div> <!----> <!----> <!----> <!----></div></div></div></div> <!----></div> </div></div></div> <!----> <div data-v-5c1a6f09="" class="punch_diary_wrap"><div data-v-5c1a6f09="" class="diary_title t2-clock c4-clock"><span data-v-5c1a6f09="">打卡日记</span> <div data-v-5c1a6f09="" class="diary_sort"><img data-v-5c1a6f09="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/common/icon_sort.svg" alt="" class="diary_sort_img"> <span data-v-5c1a6f09="" class="t24">按精选</span> <ul data-v-5c1a6f09="" class="diary_sort_list" style="display: none;"><li data-v-5c1a6f09="" class="sort-item sort-active">按精选</li><li data-v-5c1a6f09="" class="sort-item">按时间</li><!----></ul></div></div> <div data-v-5c1a6f09=""><div data-v-5c1a6f09=""><div data-v-5b04eb24="" data-v-5c1a6f09="" class="container-warp container-wrap-bottom"><!----> <div data-v-5b04eb24="" class="bar-menu-wrap" style="display: none;"><div data-v-5b04eb24="" class="bar-menu-back"></div> <div data-v-5b04eb24="" class="bar-menu" style="display: none;"><!----> <!----> <div data-v-5b04eb24="" class="menu-alone">删除</div> <div data-v-5b04eb24="" class="menu-alone top-bor">取消</div></div></div> <div data-v-5b04eb24="" class="user-info-wrap"><img data-v-5b04eb24="" src="http://wechatavator-1252524126.file.myqcloud.com/appUgoxOstA5125/image/compress/u_5dfc576f8c9cc_WZuqJ8GztI.png" class="avater"> <div data-v-5b04eb24=""><div data-v-5b04eb24="" class="nick-name"><span data-v-5b04eb24="" class="nick-name-text">李朋袀</span> <!----></div> <div data-v-5b04eb24="" class="publish-time-wrap"><span data-v-5b04eb24="" class="publish-time">47分钟前</span> <!----> <span data-v-5b04eb24="" class="publish-time">已完成3个作业</span> <!----></div></div> <!----></div> <div data-v-5b04eb24="" class="content-warp"><pre data-v-5b04eb24="" class="diray-text-content permit-line-5" style="text-overflow: ellipsis; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; display: -webkit-box; word-break: break-word;">提升专业能力，让自己能够在喜欢做的事情上发挥更大力量</pre> <div data-v-6731bdcb="" data-v-5b04eb24=""><div data-v-6731bdcb="" class="img-container"><div data-v-6731bdcb="" class="image-type-one"><img data-v-6731bdcb="" src="http://littleclockproduct-1252524126.file.myqcloud.com/appUgoxOstA5125/image/compress/cHVuY2hDYXJkLWg1aW1nLXVfNWRmYzU3NmY4YzljY19XWnVxSjhHenRJLTExODAwOTU1.jpeg" class="img-item-one"></div></div> <!----> <!----> <!----></div> <div data-v-5b04eb24="" style="margin-top: 0.24rem;"><!----></div> <div data-v-5b04eb24=""><!----></div> <!----> <!----> <!----> <div data-v-5b04eb24="" class="action-list"><div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-detail.svg" class="action-item"> <span data-v-5b04eb24="" class="action-text">详情</span></div> <div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-comment.svg" class="action-item"> <span data-v-5b04eb24="" class="action-text">评论</span></div> <div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-like.svg" class="action-item liked"> <img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-like-high.svg" class="action-item liked" style="display: none;"> <span data-v-5b04eb24="" class="action-text">赞</span></div> <!----></div>  <!---->  <!----></div> <!----> <!----></div></div><div data-v-5c1a6f09=""><div data-v-5b04eb24="" data-v-5c1a6f09="" class="container-warp no-bottome-border-line"><!----> <div data-v-5b04eb24="" class="bar-menu-wrap" style="display: none;"><div data-v-5b04eb24="" class="bar-menu-back"></div> <div data-v-5b04eb24="" class="bar-menu" style="display: none;"><!----> <!----> <div data-v-5b04eb24="" class="menu-alone">删除</div> <div data-v-5b04eb24="" class="menu-alone top-bor">取消</div></div></div> <div data-v-5b04eb24="" class="user-info-wrap"><img data-v-5b04eb24="" src="http://wechatavator-1252524126.file.myqcloud.com/appUgoxOstA5125/image/compress/u_5dfb8c071c62c_YqZOuPCSsD.png" class="avater"> <div data-v-5b04eb24=""><div data-v-5b04eb24="" class="nick-name"><span data-v-5b04eb24="" class="nick-name-text">香芋</span> <!----></div> <div data-v-5b04eb24="" class="publish-time-wrap"><span data-v-5b04eb24="" class="publish-time">2小时前</span> <!----> <span data-v-5b04eb24="" class="publish-time">已完成3个作业</span> <!----></div></div> <!----></div> <div data-v-5b04eb24="" class="content-warp"><pre data-v-5b04eb24="" class="diray-text-content permit-line-5" style="text-overflow: ellipsis; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; display: -webkit-box; word-break: break-word;">1. 在过去你的成长经历中：做哪些事情会让你感觉到享受？做哪些事情能让你觉得可以乐此不疲地一直做下去？
+动手类的事情，比较喜欢DIY、画画、做手工等。
+2. 现在的工作里哪些地方无法满足你的兴趣？
+比较多的是电脑上的文字类处理工作
+3. 你期待的工作内容和工作状态是什么样子呢？
+比较有创意的，创造性的工作。工作状态可以比较弹性和轻松。</pre> <div data-v-6731bdcb="" data-v-5b04eb24=""><!----> <!----> <!----> <!----></div> <div data-v-5b04eb24="" style="margin-top: 0.24rem;"><!----></div> <div data-v-5b04eb24=""><!----></div> <!----> <!----> <!----> <div data-v-5b04eb24="" class="action-list"><div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-detail.svg" class="action-item"> <span data-v-5b04eb24="" class="action-text">详情</span></div> <div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-comment.svg" class="action-item"> <span data-v-5b04eb24="" class="action-text">评论</span></div> <div data-v-5b04eb24="" class="action-list-li"><img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-like.svg" class="action-item liked"> <img data-v-5b04eb24="" src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/diary/icon-like-high.svg" class="action-item liked" style="display: none;"> <span data-v-5b04eb24="" class="action-text">赞</span></div> <!----></div>  <!---->  <!----></div> <!----> <!----></div></div> <div data-v-5c1a6f09=""><div class="load-title" style="display: none;">没有更多数据了</div></div> <div data-v-5c1a6f09="" class="diary_sort_list_bc" style="display: none;"></div></div></div></div></div> <div data-v-5c1a6f09="" class="footer_container"><div data-v-5c1a6f09=""><div class="ss-footer"><ul class="ss-footer-nav"><li class="ss-footer-nav-item">店铺主页</li><li class="ss-footer-nav-item">个人中心</li><li class="ss-footer-nav-item">关注我们</li><li class="ss-footer-nav-item">意见反馈</li></ul><div class="ss-footer-logo"><div class="ss-footer-logo--default"><img src="data:image/png;base64,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" alt="小鹅通提供技术支持"></div></div><div data-v-b596aff0="" class="ss-Attention-qr" style="display: none;"><div data-v-b596aff0="" class="ss-Att-qr-mask"></div><div data-v-b596aff0="" class="ss-Att-qr-main"><img data-v-b596aff0="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAVRJREFUSA2tlj1ygzAQhREFtHGTQ8QniMs0tM5JkxkmBY3d5Qa+RAq7hga/x4BG6Ge1DtYMtrw/35O0C8a0bftTFMVLVVWfTdP8Yb55dF33OgzDN0DXEh+7cRwPfd+f6NhKJwOsM5jvZJdY+RGTC679VpEFDtYbmTwVg0kxO06Y7umo6/rj0ePy4QtjEtgqkoKTawX+KyLBA4FHRXLwqIBWRAMni20aDBaYRYIj2l0znE0xdctS0AAEw6oGfoADst3FGLYzvqxN6jhRgDBfhDYMFZyBWQEGeSI0qe+VaA1IeNbI7mBe/RmCU0FnYfURiTtwjsZ2i9RdsV0nd+DAg9VKPl8kKqABaGIoFghoE5msiV0JaBIIdkcuxwrkAl2oP5dyJwEpwIelfqcYJuVIgSR7jFXi3/8LSUErSqCUz38Kk80b7WaM+ZUeuSlgzL6IkIk3i+sdt5BmuObG7RoAAAAASUVORK5CYII=" class="ss-Att-qr-close"><p data-v-b596aff0="" class="ss-Att-qr-titel"></p><div data-v-b596aff0="" class="ss-Att-qr-code"><img data-v-b596aff0="" src=""></div><div data-v-b596aff0="" class="ss-Att-qr-footer">长按识别二维码关注公众号</div></div></div></div></div></div> <div data-v-5c1a6f09="" class="sender_wrap"><div data-v-5c1a6f09="" style="width: 100%;"><div data-v-5c1a6f09="" class="punch PressGreenBg t2-clock">立即打卡</div></div></div> <div data-v-5c1a6f09="" class="add-wexin-container-clock certificate-container"><img src="https://static-resource.xiaoeknow.com/images/xiaoe_clock/punch/icon_riqian_close.png" class="close-certificate pressActive"> <img id="certificate_img" src="" class="certificate-box"> <div class="certificate-btn t4-clock">长按图片保存，发送给微信好友或微信群</div></div></section> <!----></div>
+<script type="text/javascript" src="https://static-resource.xiaoeknow.com/dist/XiaoeClock/xiaoe_clock/homework_clock/index.js?5487ffb6bb9214e91c9ef5a7a010ddde"></script>
+
+<!-- <script src="/js/utils/vconsole.min.js"></script> -->
+
+
+
+</body></html>
